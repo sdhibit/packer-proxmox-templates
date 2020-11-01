@@ -1,0 +1,6 @@
+{
+    "proxmox_url": "https://proxmox.stevehibit.com:8006/api2/json",
+    "proxmox_password": "fuckyou",
+    "template_id": "1009",
+    "ssh_password": "fuckyou"
+}
