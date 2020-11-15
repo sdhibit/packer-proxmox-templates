@@ -1,0 +1,5 @@
+packer_cache
+
+iso/*
+
+*.auto.pkrvars.hcl
