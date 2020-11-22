@@ -24,7 +24,7 @@ source "proxmox" "ubuntu" {
   scsi_controller = "virtio-scsi-pci"
 
   network_adapters {
-    #model  = "virtio"
+    model  = "virtio"
     bridge = "vmbr0"
   }
 
@@ -40,6 +40,7 @@ source "proxmox" "ubuntu" {
   http_interface           = var.http_interface
   vm_interface             = var.vm_interface
 
+  boot         = null // "order=scsi0;ide2",
   boot_command = [
     "<esc><wait><esc><wait><f6><wait><esc><wait>", 
     "<bs><bs><bs><bs><bs>", 
