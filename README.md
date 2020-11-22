@@ -1,6 +1,10 @@
 # packer-proxmox-templates
 Proxmox images built with Packer
 
+Requires Proxmox >= 1.6.6 which fixes proxmox boot order change in pve-6.2-15
+https://git.proxmox.com/?p=qemu-server.git;a=commit;h=2141a802b843475be82e04d8c351d6f7cd1a339a
+https://github.com/hashicorp/packer/issues/10252
+
 ## Links
 - https://serverfault.com/questions/842315/removing-install-user-with-packer
 - https://github.com/Azure/aks-engine/issues/899
