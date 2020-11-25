@@ -163,6 +163,30 @@ variable "cloud_init_storage_pool" {
 
 variable "cloud_init_apt_packages" {
   type        = list(string)
-  description = "A list of apt packages to install during the subiquity cloud-init installer"
+  description = "A list of apt packages to install during the subiquity cloud-init installer."
   default     = []
+}
+
+variable "locale" {
+  type        = string
+  description = "The system locale set during the subiquity install."
+  default     = "en_US" 
+}
+
+variable "keyboard_layout" {
+  type        = string
+  description = "Sets the keyboard layout during the subiquity install."
+  default     = "en" 
+}
+
+variable "keyboard_variant" {
+  type        = string
+  description = "Sets the keyboard variant during the subiquity install."
+  default     = "us" 
+}
+
+variable "timezone" {
+  type        = string
+  description = "Sets the timezone during the subiquity install."
+  default     = "Etc/UTC" 
 }
