@@ -17,6 +17,16 @@ variable "proxmox_password" {
   sensitive   = true
 }
 
+variable "disk_storage_pool" {
+  type        = string
+  description = "Storage pool for the boot disk and cloud-init image."
+}
+
+variable "disk_storage_pool_type" {
+  type        = string
+  description = "Storage pool type for the boot disk and cloud-init image."
+}
+
 ##### Optional Variables #####
 
 variable "proxmox_port" {
@@ -145,14 +155,14 @@ variable "vm_interface" {
   default     = null
 }
 
-variable "cloud_init" {
-  type        = bool
-  description = "Adds a Cloud-Init CDROM drive to the virtual machine after it has been converted to a template."
-  default     = false
-}
-
 variable "cloud_init_storage_pool" {
   type        = string
-  description = "Name of the Proxmox storage pool to store the Cloud-Init CDROM on. If not given, the storage pool of the boot device will be used."
+  description = "Name of the Proxmox storage pool to store the Cloud-Init CDROM on. If not given, the storage pool of the boot device will be used (disk_storage_pool)."
   default     = null
+}
+
+variable "cloud_init_apt_packages" {
+  type        = list(string)
+  description = "A list of apt packages to install during the subiquity cloud-init installer"
+  default     = []
 }

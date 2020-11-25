@@ -14,6 +14,8 @@ https://github.com/hashicorp/packer/issues/10252
 - https://github.com/hashicorp/packer/issues/8463
 - https://everythingshouldbevirtual.com/Ubuntu-20.04-cloud-init-gotchas/
 - https://wiki.ubuntu.com/DashAsBinSh
+- https://github.com/hashicorp/packer/issues/9115#issuecomment-688991546
+- https://gist.github.com/s3rj1k/55b10cd20f31542046018fcce32f103e
 
 ## Adding packer user with correct privileges 
 pveum useradd packer@pve

@@ -12,23 +12,23 @@ build {
   provisioner "shell" {
     execute_command = "sudo /bin/sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
-      "if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then rm /etc/cloud/cloud.cfg.d/99-installer.cfg; echo 'Deleting subiquity cloud-init config'; fi"
+      "if [ -f /etc/cloud/cloud.cfg.d/99-installer.cfg ]; then rm /etc/cloud/cloud.cfg.d/99-installer.cfg; echo 'Deleting subiquity cloud-init config'; fi",
+      "if [ -f /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg ]; then rm /etc/cloud/cloud.cfg.d/subiquity-disable-cloudinit-networking.cfg; echo 'Deleting subiquity cloud-init network config'; fi"
     ]
   }
 
+  provisioner "shell" {
+    environment_vars = [
+      "USERNAME=${local.ssh_username}"
+    ]
+    skip_clean      = true
+    execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }} ; rm -f {{ .Path }}"
+    inline_shebang = "/bin/bash -e"
+    inline = [
+      "rm -f /etc/sudoers.d/90-cloud-init-users",
+      #"deluser --remove-home $USERNAME",
+    ]
 
-  # provisioner "shell" {
-  #   environment_vars = [
-  #     "USERNAME=${local.ssh_username}"
-  #   ]
-  #   skip_clean      = true
-  #   execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }} ; rm -f {{ .Path }}"
-  #   inline_shebang = "/bin/bash -e"
-  #   inline = [
-  #     "rm -f /etc/sudoers.d/90-cloud-init-users",
-  #     #"deluser --remove-home $USERNAME",
-  #   ]
-
-  # }
+  }
 
 }

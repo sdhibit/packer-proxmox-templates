@@ -29,9 +29,9 @@ source "proxmox" "ubuntu" {
   }
 
   disks {
-    disk_size         = "20G"
-    storage_pool      = "local-lvm"
-    storage_pool_type = "lvm"
+    disk_size         = "8G"
+    storage_pool      = local.disk_storage_pool
+    storage_pool_type = local.disk_storage_pool_type
     type              = "scsi"
   }
 
@@ -44,7 +44,7 @@ source "proxmox" "ubuntu" {
   boot_command = [
     "<esc><wait><esc><wait><f6><wait><esc><wait>", 
     "<bs><bs><bs><bs><bs>", 
-    "autoinstall ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ", 
+    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ", 
     "--- <enter>"
   ]
   boot_wait    = "5s"
@@ -57,7 +57,8 @@ source "proxmox" "ubuntu" {
   ssh_timeout               = "45m"
   ssh_agent_auth            = var.ssh_agent_auth
 
-  cloud_init              = var.cloud_init
-  cloud_init_storage_pool = var.cloud_init_storage_pool
+  cloud_init              = true
+  // latest proxmox API requires this to be set in order for a cloud init image to be created. Does not take boot disk storage pool as a default anymore. 
+  cloud_init_storage_pool = local.cloud_init_storage_pool
 
 }
