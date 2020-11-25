@@ -8,10 +8,10 @@ locals {
   disk_storage_pool_type  = var.disk_storage_pool_type
   cloud_init_storage_pool = var.cloud_init_storage_pool != null ? var.cloud_init_storage_pool : var.disk_storage_pool
 
-  //en_US
-  locale = "en_US"
-  layout = "en"
-  variant = "us"
+  locale            = var.locale
+  keyboard_layout   = var.keyboard_layout
+  keyboard_variant  = var.keyboard_variant
+  timezone          = var.timezone
 
   ssh_username              = var.ssh_username
   ssh_password              = var.ssh_password
