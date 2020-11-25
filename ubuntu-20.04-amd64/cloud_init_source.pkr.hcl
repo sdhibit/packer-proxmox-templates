@@ -10,8 +10,8 @@ autoinstall:
   version: 1
   locale: ${local.locale}
   keyboard:
-    layout: ${local.layout}
-    variant: ${local.variant}  
+    layout: ${local.keyboard_layout}
+    variant: ${local.keyboard_variant}  
   network:
     network:
       version: 2
@@ -40,6 +40,8 @@ autoinstall:
     - curtin in-target --target /target update-grub2
   user-data:
     package_upgrade: true
+    disable_root: true
+    timezone: ${ local.timezone }
     users:
       - name: ${ local.ssh_username }
         passwd: ${ bcrypt(local.ssh_password) }
