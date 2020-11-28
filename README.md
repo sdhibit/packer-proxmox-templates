@@ -16,9 +16,30 @@ https://github.com/hashicorp/packer/issues/10252
 - https://wiki.ubuntu.com/DashAsBinSh
 - https://github.com/hashicorp/packer/issues/9115#issuecomment-688991546
 - https://gist.github.com/s3rj1k/55b10cd20f31542046018fcce32f103e
+- https://gist.github.com/thde/5312a42665c5c901aef4
+- https://github.com/chriswayg/packer-proxmox-templates/blob/master/alpine-3-amd64-proxmox/alpine-3-amd64-proxmox.json
+- https://github.com/bobfraser1/packer-alpine/blob/main/alpine.json
+- https://github.com/stvnjacobs/packer-alpine/blob/master/alpine.json
+- https://medium.com/@victor.oliveira.comp/provision-proxmox-vms-with-ansible-quick-and-easy-107d781fd749
+- https://gist.github.com/imduffy15/2d6f3cd46efa2ff68286
+- https://serverfault.com/questions/991009/usepam-not-supported-anymore
+- https://github.com/camptocamp/puppet-accounts/issues/35
 
 ## Adding packer user with correct privileges 
 pveum useradd packer@pve
 pveum passwd packer@pve
 pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.AllocateSpace Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Monitor"
 pveum aclmod / -user packer@pve -role Packer
+
+#apk add dos2unix --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
+
+# Alpine cloud-init drive not loading
+
+cloud-init tries to mount the Proxmox cloud-init CDROM with the -t auto flag. iso9660 is not recognized by default in the virt alpine image. The 'isofs' module needs to be loaded in order for cloud-init to mount the proxmox cloud-init drive
+
+```bash
+# Check if iso9660 is in /proc/filesystems
+cat /proc/filesystems
+
+
+```
