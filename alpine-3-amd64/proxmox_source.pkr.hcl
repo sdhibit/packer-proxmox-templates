@@ -37,6 +37,8 @@ source "proxmox" "alpine" {
 
   http_directory           = "http"
   http_bind_address        = var.http_bind_address
+  http_port_min            = var.http_server_port
+  http_port_max            = var.http_server_port
   http_interface           = var.http_interface
   vm_interface             = var.vm_interface
 
@@ -45,7 +47,7 @@ source "proxmox" "alpine" {
     "root<enter><wait>",
     "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
     "setup-apkrepos -1<enter><wait10>",
-    "wget http://{{ .HTTPIP }}:{{ .HTTPPort }}/answers && sed -i 's/\\r$//g' $PWD/answers<enter><wait>", #Replace CR if file was generated on Windows machine
+    "wget ${ local.http_url }/answers && sed -i 's/\\r$//g' $PWD/answers<enter><wait>", #Replace CR if file was generated on Windows machine
     "setup-alpine -f $PWD/answers<enter><wait5>",
     "${ local.ssh_password }<enter><wait>",
     "${ local.ssh_password }<enter><wait>",
@@ -70,8 +72,8 @@ source "proxmox" "alpine" {
     "setup-cloud-init <enter><wait>",    
     "echo 'datasource_list: [ NoCloud, ConfigDrive, None ]' > /etc/cloud/cloud.cfg.d/99_pve.cfg <enter><wait>",
     "mkdir -p /var/lib/cloud/seed/nocloud-net <enter><wait>",
-    "wget -P /var/lib/cloud/seed/nocloud-net http://{{ .HTTPIP }}:{{ .HTTPPort }}/meta-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/meta-data <enter><wait>",
-    "wget -P /var/lib/cloud/seed/nocloud-net http://{{ .HTTPIP }}:{{ .HTTPPort }}/user-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/user-data <enter><wait>",
+    "wget -P /var/lib/cloud/seed/nocloud-net ${ local.http_url }/meta-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/meta-data <enter><wait>",
+    "wget -P /var/lib/cloud/seed/nocloud-net ${ local.http_url }/user-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/user-data <enter><wait>",
     "echo 'isofs' > /etc/modules-load.d/isofs.conf && chmod -x /etc/modules-load.d/isofs.conf <enter><wait>", # Add iso9660 as a valid filesystem. Necessary for cloud-init to mount NoData with proxmox cloud-init drive (/dev/sr[0-9]).
     "exit <enter><wait>",
     "umount /mnt/sys <enter><wait>",
