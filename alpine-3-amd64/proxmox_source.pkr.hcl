@@ -49,8 +49,8 @@ source "proxmox" "alpine" {
     "setup-apkrepos -1<enter><wait10>",
     "wget ${ local.http_url }/answers && sed -i 's/\\r$//g' $PWD/answers<enter><wait>", #Replace CR if file was generated on Windows machine
     "setup-alpine -f $PWD/answers<enter><wait5>",
-    "${ local.ssh_password }<enter><wait>",
-    "${ local.ssh_password }<enter><wait>",
+    "${ local.root_password }<enter><wait>",
+    "${ local.root_password }<enter><wait>",
     "<wait20>",
     "y<enter><wait20>",
     "mount /dev/sda3 /mnt<enter>", # TODO: change to variable if LVM is set: /dev/vg0/lv_root

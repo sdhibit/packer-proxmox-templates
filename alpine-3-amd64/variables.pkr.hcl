@@ -95,6 +95,12 @@ variable "ssh_agent_auth" {
   default     = false
 }
 
+variable "root_password" {
+  type        = string
+  description = "root password to use during the setup process. A random password will be used if null."
+  default     = null
+}
+
 variable "memory" {
   type        = number
   description = "How much memory, in megabytes, to give the virtual machine."
