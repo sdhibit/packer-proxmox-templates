@@ -1,7 +1,6 @@
 locals {
   # "timestamp" template function replacement
   timestamp = regex_replace(timestamp(), "[- TZ:]", "") 
-  
 
   use_iso_file = var.iso_file != null ? true : false
 
