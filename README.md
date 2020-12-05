@@ -33,6 +33,18 @@ pveum aclmod / -user packer@pve -role Packer
 
 #apk add dos2unix --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 
+## Running on WSL2
+
+WSL2 runs a virtual network . If running packer on WSL2, some firewall and port-forwarding settings must be applied on Windows in order for packer's HTTP server to be accessible to the virtual machine. A few packer variables should also be set in order to use the known, port-forwarded port and override the packer HTTP IP with the Windows host IP that's accessible to the VM being built.
+
+- https://winaero.com/open-port-windows-firewall-windows-10/
+- https://docs.microsoft.com/en-us/windows/wsl/compare-versions#accessing-a-wsl-2-distribution-from-your-local-area-network-lan
+- https://serverfault.com/questions/883266/powershell-how-open-a-windows-firewall-port
+- https://dev.to/vishnumohanrk/wsl-port-forwarding-2e22
+- https://github.com/microsoft/WSL/issues/4150#issuecomment-504209723
+- https://github.com/shayne/go-wsl2-host
+- https://github.com/shayne/wsl2-hacks
+
 # Alpine cloud-init drive not loading
 
 cloud-init tries to mount the Proxmox cloud-init CDROM with the -t auto flag. iso9660 is not recognized by default in the virt alpine image. The 'isofs' module needs to be loaded in order for cloud-init to mount the proxmox cloud-init drive

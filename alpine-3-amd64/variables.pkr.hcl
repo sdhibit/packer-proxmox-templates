@@ -95,6 +95,12 @@ variable "ssh_agent_auth" {
   default     = false
 }
 
+variable "root_password" {
+  type        = string
+  description = "root password to use during the setup process. A random password will be used if null."
+  default     = null
+}
+
 variable "memory" {
   type        = number
   description = "How much memory, in megabytes, to give the virtual machine."
@@ -134,6 +140,18 @@ variable "iso_file" {
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
+  default     = null
+}
+
+variable "http_server_host" {
+  type        = string
+  description = "Overrides packers {{ .HTTPIP }} setting in the boot commands. Useful when running packer in WSL2."
+  default     = null
+}
+
+variable "http_server_port" {
+  type        = number
+  description = "The port to serve the http_directory on. Overrides packers {{ .HTTPPort }} setting in the boot commands. Useful when running packer in WSL2."
   default     = null
 }
 
