@@ -26,7 +26,6 @@ build {
     inline_shebang = "/bin/bash -e"
     inline = [
       "rm -f /etc/sudoers.d/90-cloud-init-users",
-      #"deluser --remove-home $USERNAME",
     ]
 
   }

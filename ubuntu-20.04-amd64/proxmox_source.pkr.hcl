@@ -38,13 +38,15 @@ source "proxmox" "ubuntu" {
   http_directory           = "http"
   http_bind_address        = var.http_bind_address
   http_interface           = var.http_interface
+  http_port_min            = var.http_server_port
+  http_port_max            = var.http_server_port
   vm_interface             = var.vm_interface
 
   boot         = null // "order=scsi0;ide2",
   boot_command = [
     "<esc><wait><esc><wait><f6><wait><esc><wait>", 
     "<bs><bs><bs><bs><bs>", 
-    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=http://{{ .HTTPIP }}:{{ .HTTPPort }}/ ", 
+    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=${ local.http_url }/ ", 
     "--- <enter>"
   ]
   boot_wait    = "5s"
@@ -58,7 +60,8 @@ source "proxmox" "ubuntu" {
   ssh_agent_auth            = var.ssh_agent_auth
 
   cloud_init              = true
-  // latest proxmox API requires this to be set in order for a cloud init image to be created. Does not take boot disk storage pool as a default anymore. 
+  // latest proxmox API requires this to be set in order for a cloud init image to be created. 
+  // Does not take boot disk storage pool as a default anymore. 
   cloud_init_storage_pool = local.cloud_init_storage_pool
 
 }

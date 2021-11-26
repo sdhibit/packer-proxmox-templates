@@ -4,6 +4,10 @@ locals {
 
   use_iso_file = var.iso_file != null ? true : false
 
+  http_server_host  = var.http_server_host
+  http_server_port  = var.http_server_port
+  http_url          = join("", ["http://", coalesce(var.http_server_host, "{{ .HTTPIP }}"), ":", coalesce(var.http_server_port, "{{ .HTTPPort }}")])
+
   disk_storage_pool       = var.disk_storage_pool
   disk_storage_pool_type  = var.disk_storage_pool_type
   cloud_init_storage_pool = var.cloud_init_storage_pool != null ? var.cloud_init_storage_pool : var.disk_storage_pool
