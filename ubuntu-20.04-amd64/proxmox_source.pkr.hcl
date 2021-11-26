@@ -15,7 +15,7 @@ source "proxmox" "ubuntu" {
   iso_checksum      = var.iso_checksum
   unmount_iso       = true
 
-  os          = "l26" 
+  os          = "l26"
   qemu_agent  = true
   memory      = var.memory
   cores       = var.cores
@@ -44,13 +44,13 @@ source "proxmox" "ubuntu" {
 
   boot         = null // "order=scsi0;ide2",
   boot_command = [
-    "<esc><wait><esc><wait><f6><wait><esc><wait>", 
-    "<bs><bs><bs><bs><bs>", 
-    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=${ local.http_url }/ ", 
+    "<esc><wait><esc><wait><f6><wait><esc><wait>",
+    "<bs><bs><bs><bs><bs>",
+    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=${ local.http_url }/ ",
     "--- <enter>"
   ]
   boot_wait    = "5s"
-    
+
   ssh_handshake_attempts    = 100
   ssh_username              = local.ssh_username
   ssh_password              = local.ssh_password
@@ -60,8 +60,8 @@ source "proxmox" "ubuntu" {
   ssh_agent_auth            = var.ssh_agent_auth
 
   cloud_init              = true
-  // latest proxmox API requires this to be set in order for a cloud init image to be created. 
-  // Does not take boot disk storage pool as a default anymore. 
+  // latest proxmox API requires this to be set in order for a cloud init image to be created.
+  // Does not take boot disk storage pool as a default anymore.
   cloud_init_storage_pool = local.cloud_init_storage_pool
 
 }

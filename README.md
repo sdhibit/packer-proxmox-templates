@@ -25,7 +25,7 @@ https://github.com/hashicorp/packer/issues/10252
 - https://serverfault.com/questions/991009/usepam-not-supported-anymore
 - https://github.com/camptocamp/puppet-accounts/issues/35
 
-## Adding packer user with correct privileges 
+## Adding packer user with correct privileges
 pveum useradd packer@pve
 pveum passwd packer@pve
 pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory Datastore.AllocateSpace Sys.Modify VM.Config.Options VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt VM.Config.HWType VM.Monitor"

@@ -9,6 +9,4 @@ repos:
   rev: v0.0.2
   hooks:
     - id: packer_validate
-      args:
-        - manual_file_entry
     - id: packer_fmt

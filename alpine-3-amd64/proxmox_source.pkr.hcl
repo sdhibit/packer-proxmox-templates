@@ -15,7 +15,7 @@ source "proxmox" "alpine" {
   iso_checksum      = var.iso_checksum
   unmount_iso       = true
 
-  os          = "l26" 
+  os          = "l26"
   qemu_agent  = true
   memory      = var.memory
   cores       = var.cores
@@ -67,7 +67,7 @@ source "proxmox" "alpine" {
     "apk add 'partx' 'ifupdown-ng' 'iproute2-minimal' 'cloud-init' <enter><wait>",
     "echo -e GA_PATH=\"/dev/vport2p1\" >> /etc/conf.d/qemu-guest-agent <enter><wait>", # ls /dev/vport*
     "rc-update add qemu-guest-agent<enter><wait>",
-    "setup-cloud-init <enter><wait>",    
+    "setup-cloud-init <enter><wait>",
     "echo 'datasource_list: [ NoCloud, ConfigDrive, None ]' > /etc/cloud/cloud.cfg.d/99_pve.cfg <enter><wait>",
     "mkdir -p /var/lib/cloud/seed/nocloud-net <enter><wait>",
     "wget -P /var/lib/cloud/seed/nocloud-net ${ local.http_url }/meta-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/meta-data <enter><wait>",
@@ -82,7 +82,7 @@ source "proxmox" "alpine" {
   ]
 
   boot_wait    = "20s"
-    
+
   ssh_handshake_attempts    = 100
   ssh_username              = local.ssh_username
   ssh_password              = local.ssh_password
@@ -92,8 +92,8 @@ source "proxmox" "alpine" {
   ssh_agent_auth            = var.ssh_agent_auth
 
   cloud_init              = true
-  // latest proxmox API requires this to be set in order for a cloud init image to be created. 
-  // Does not take boot disk storage pool as a default anymore. 
+  // latest proxmox API requires this to be set in order for a cloud init image to be created.
+  // Does not take boot disk storage pool as a default anymore.
   cloud_init_storage_pool = local.cloud_init_storage_pool
 
 }

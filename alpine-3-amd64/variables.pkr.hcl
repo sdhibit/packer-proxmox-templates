@@ -42,7 +42,7 @@ variable "proxmox_skip_verify_tls" {
 }
 
 variable "proxmox_node" {
-  type        = string 
+  type        = string
   description = "Which node in the Proxmox cluster to start the virtual machine on during creation."
   default     = "proxmox"
 }
@@ -50,13 +50,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "alpine-virt-3-template" 
+  default     = "alpine-virt-3-template"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Alpine 3.12" 
+  default     = "Base template for Alpine 3.12"
 }
 
 variable "template_vm_id" {
@@ -67,7 +67,7 @@ variable "template_vm_id" {
 
 variable "ssh_username" {
   type        = string
-  description = "The username to connect to SSH with." 
+  description = "The username to connect to SSH with."
   default     = "packer"
 }
 
@@ -80,7 +80,7 @@ variable "ssh_password" {
 variable "ssh_private_key_file" {
   type        = string
   description = "Path to private key file for SSH authentication."
-  default     = null 
+  default     = null
 }
 
 variable "ssh_public_key" {
@@ -169,7 +169,7 @@ variable "http_interface" {
 
 variable "vm_interface" {
   type        = string
-  description = "Name of the network interface that Packer gets the VMs IP from." 
+  description = "Name of the network interface that Packer gets the VMs IP from."
   default     = null
 }
 
@@ -182,23 +182,23 @@ variable "network_bridge" {
 # variable "locale" {
 #   type        = string
 #   description = "The system locale set during the subiquity install."
-#   default     = "en_US" 
+#   default     = "en_US"
 # }
 
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the setup-alpine install."
-  default     = "us" 
+  default     = "us"
 }
 
 variable "keyboard_variant" {
   type        = string
   description = "Sets the keyboard variant during the setup-alpine install."
-  default     = "us" 
+  default     = "us"
 }
 
 variable "timezone" {
   type        = string
   description = "Sets the timezone during the setup-alpine install."
-  default     = "Etc/UTC" 
+  default     = "Etc/UTC"
 }
