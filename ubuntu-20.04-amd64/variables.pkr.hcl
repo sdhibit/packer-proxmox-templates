@@ -38,7 +38,7 @@ variable "proxmox_port" {
 variable "proxmox_skip_verify_tls" {
   type        = bool
   description = "Skip validating the Proxmox certificate."
-  default     = true
+  default     = false
 }
 
 variable "proxmox_node" {
@@ -116,7 +116,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://releases.ubuntu.com/20.04/ubuntu-20.04.1-live-server-amd64.iso"
+  default     = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -128,12 +128,24 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"ubuntu-20.04.1-live-server-amd64.iso"
+  default     = null //"ubuntu-20.04.3-live-server-amd64.iso"
 }
 
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
+  default     = "f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98"
+}
+
+variable "http_server_host" {
+  type        = string
+  description = "Overrides packers {{ .HTTPIP }} setting in the boot commands. Useful when running packer in WSL2."
+  default     = null
+}
+
+variable "http_server_port" {
+  type        = number
+  description = "The port to serve the http_directory on. Overrides packers {{ .HTTPPort }} setting in the boot commands. Useful when running packer in WSL2."
   default     = null
 }
 
