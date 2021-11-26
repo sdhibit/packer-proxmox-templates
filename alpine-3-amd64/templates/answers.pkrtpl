@@ -1,0 +1,15 @@
+KEYMAPOPTS="${ keyboard_layout } ${ keyboard_variant }"
+HOSTNAMEOPTS="-n ${ template_name }"
+INTERFACESOPTS="auto lo
+iface lo inet loopback
+
+auto eth0
+iface eth0 inet dhcp
+"
+DNSOPTS="-n 8.8.8.8"
+TIMEZONEOPTS="-z ${ timezone }"
+PROXYOPTS="none"
+APKREPOSOPTS="-1"
+SSHDOPTS="-c openssh"
+NTPOPTS="-c chrony"
+DISKOPTS="-m sys /dev/sda"

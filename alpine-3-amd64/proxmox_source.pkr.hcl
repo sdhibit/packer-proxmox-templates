@@ -46,7 +46,6 @@ source "proxmox" "alpine" {
   boot_command = [
     "root<enter><wait>",
     "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
-    "setup-apkrepos -1<enter><wait10>",
     "wget ${ local.http_url }/answers && sed -i 's/\\r$//g' $PWD/answers<enter><wait>", #Replace CR if file was generated on Windows machine
     "setup-alpine -f $PWD/answers<enter><wait5>",
     "${ local.root_password }<enter><wait>",
@@ -58,15 +57,14 @@ source "proxmox" "alpine" {
     "mount -t proc none /mnt/proc <enter>",
     "mount -o bind /sys /mnt/sys <enter>",
     "chroot /mnt /bin/sh -l <enter><wait>",
-    "echo '@edgecommunity http://dl-cdn.alpinelinux.org/alpine/edge/community' >> /etc/apk/repositories <enter><wait>",
-    "echo '@edgemain http://dl-cdn.alpinelinux.org/alpine/edge/main' >> /etc/apk/repositories <enter><wait>",
+    "sed -r -i '\\|/v[0-9]+\\.[0-9]+/community|s|^#||g' /etc/apk/repositories <enter><wait>",
     "echo -e 'nameserver 1.1.1.1' > /etc/resolv.conf <enter><wait>",
     "apk update <enter><wait10>",
     "apk add sudo <enter><wait>",
     "apk add openssh-server-pam <enter><wait>",
     "echo 'UsePAM yes' >> /etc/ssh/sshd_config <enter><wait>",
-    "apk add 'qemu-guest-agent@edgecommunity' <enter><wait>",
-    "apk add 'partx@edgemain' 'ifupdown-ng@edgemain' 'iproute2-minimal@edgemain' 'cloud-init@edgecommunity' <enter><wait>",
+    "apk add 'qemu-guest-agent' <enter><wait>",
+    "apk add 'partx' 'ifupdown-ng' 'iproute2-minimal' 'cloud-init' <enter><wait>",
     "echo -e GA_PATH=\"/dev/vport2p1\" >> /etc/conf.d/qemu-guest-agent <enter><wait>", # ls /dev/vport*
     "rc-update add qemu-guest-agent<enter><wait>",
     "setup-cloud-init <enter><wait>",    
@@ -94,7 +92,8 @@ source "proxmox" "alpine" {
   ssh_agent_auth            = var.ssh_agent_auth
 
   cloud_init              = true
-  // latest proxmox API requires this to be set in order for a cloud init image to be created. Does not take boot disk storage pool as a default anymore. 
+  // latest proxmox API requires this to be set in order for a cloud init image to be created. 
+  // Does not take boot disk storage pool as a default anymore. 
   cloud_init_storage_pool = local.cloud_init_storage_pool
 
 }

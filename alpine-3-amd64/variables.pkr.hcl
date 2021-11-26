@@ -104,7 +104,7 @@ variable "root_password" {
 variable "memory" {
   type        = number
   description = "How much memory, in megabytes, to give the virtual machine."
-  default     = 1024
+  default     = 2048
 }
 
 variable "cores" {
@@ -122,7 +122,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "http://dl-cdn.alpinelinux.org/alpine/v3.12/releases/x86_64/alpine-virt-3.12.1-x86_64.iso"
+  default     = "http://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.3-x86_64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -134,7 +134,7 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"alpine-virt-3.12.1-x86_64.iso"
+  default     = null //"alpine-virt-3.14.3-x86_64.iso"
 }
 
 variable "iso_checksum" {

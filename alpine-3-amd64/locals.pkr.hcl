@@ -14,7 +14,6 @@ locals {
 
   network_bridge = var.network_bridge
 
-  //locale            = var.locale
   keyboard_layout   = var.keyboard_layout
   keyboard_variant  = var.keyboard_variant
   timezone          = var.timezone
