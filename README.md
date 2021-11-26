@@ -33,7 +33,7 @@ pveum aclmod / -user packer@pve -role Packer
 
 #apk add dos2unix --update-cache --repository http://dl-3.alpinelinux.org/alpine/edge/community/ --allow-untrusted
 
-## Running on WSL2
+## Running on NAT'ed network (ChromeOS Linux, WSL2)
 
 WSL2 runs a virtual network . If running packer on WSL2, some firewall and port-forwarding settings must be applied on Windows in order for packer's HTTP server to be accessible to the virtual machine. A few packer variables should also be set in order to use the known, port-forwarded port and override the packer HTTP IP with the Windows host IP that's accessible to the VM being built.
 
@@ -44,6 +44,7 @@ WSL2 runs a virtual network . If running packer on WSL2, some firewall and port-
 - https://github.com/microsoft/WSL/issues/4150#issuecomment-504209723
 - https://github.com/shayne/go-wsl2-host
 - https://github.com/shayne/wsl2-hacks
+- https://chromeos.dev/en/web-environment/port-forwarding
 
 # Alpine cloud-init drive not loading
 
