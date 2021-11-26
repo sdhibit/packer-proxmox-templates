@@ -11,8 +11,8 @@ users:
 %{ if length(ssh_public_keys) > 0 ~}
     ssh_authorized_keys:
 %{ for key in ssh_public_keys ~}
-      - ${key} 
-%{ endfor ~}           
+      - ${key}
+%{ endfor ~}
 %{ endif ~}
 runcmd:
   - [ rm, -f, /root/.ssh/authorized_keys ]

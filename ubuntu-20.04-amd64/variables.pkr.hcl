@@ -42,7 +42,7 @@ variable "proxmox_skip_verify_tls" {
 }
 
 variable "proxmox_node" {
-  type        = string 
+  type        = string
   description = "Which node in the Proxmox cluster to start the virtual machine on during creation."
   default     = "proxmox"
 }
@@ -50,13 +50,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-20.04-base" 
+  default     = "ubuntu-20.04-base"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 20.04" 
+  default     = "Base template for Ubuntu 20.04"
 }
 
 variable "template_vm_id" {
@@ -67,7 +67,7 @@ variable "template_vm_id" {
 
 variable "ssh_username" {
   type        = string
-  description = "The username to connect to SSH with." 
+  description = "The username to connect to SSH with."
   default     = "packer"
 }
 
@@ -80,7 +80,7 @@ variable "ssh_password" {
 variable "ssh_private_key_file" {
   type        = string
   description = "Path to private key file for SSH authentication."
-  default     = null 
+  default     = null
 }
 
 variable "ssh_public_key" {
@@ -163,7 +163,7 @@ variable "http_interface" {
 
 variable "vm_interface" {
   type        = string
-  description = "Name of the network interface that Packer gets the VMs IP from." 
+  description = "Name of the network interface that Packer gets the VMs IP from."
   default     = null
 }
 
@@ -182,23 +182,23 @@ variable "cloud_init_apt_packages" {
 variable "locale" {
   type        = string
   description = "The system locale set during the subiquity install."
-  default     = "en_US" 
+  default     = "en_US"
 }
 
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the subiquity install."
-  default     = "en" 
+  default     = "en"
 }
 
 variable "keyboard_variant" {
   type        = string
   description = "Sets the keyboard variant during the subiquity install."
-  default     = "us" 
+  default     = "us"
 }
 
 variable "timezone" {
   type        = string
   description = "Sets the timezone during the subiquity install."
-  default     = "Etc/UTC" 
+  default     = "Etc/UTC"
 }

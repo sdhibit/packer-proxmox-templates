@@ -4,7 +4,7 @@ autoinstall:
   locale: ${locale}
   keyboard:
     layout: ${keyboard_layout}
-    variant: ${keyboard_variant}  
+    variant: ${keyboard_variant}
   network:
     network:
       version: 2
@@ -21,8 +21,8 @@ autoinstall:
   packages:
     - qemu-guest-agent
 %{ for package in cloud_init_apt_packages ~}
-    - ${package} 
-%{ endfor ~} 
+    - ${package}
+%{ endfor ~}
   storage:
     layout:
       name: direct
@@ -45,6 +45,6 @@ autoinstall:
 %{ if length(ssh_public_keys) > 0 ~}
         ssh_authorized_keys:
 %{ for key in ssh_public_keys ~}
-          - ${key} 
-%{ endfor ~}           
+          - ${key}
+%{ endfor ~}
 %{ endif ~}
