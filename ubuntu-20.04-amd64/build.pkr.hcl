@@ -23,7 +23,7 @@ build {
     ]
     skip_clean      = true
     execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }} ; rm -f {{ .Path }}"
-    inline_shebang = "/bin/bash -e"
+    inline_shebang  = "/bin/bash -e"
     inline = [
       "rm -f /etc/sudoers.d/90-cloud-init-users",
     ]
