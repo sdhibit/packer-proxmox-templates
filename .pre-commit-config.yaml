@@ -9,3 +9,7 @@ repos:
   rev: v0.0.2
   hooks:
     - id: packer_fmt
+- repo: https://github.com/gruntwork-io/pre-commit
+  rev: v0.1.17
+  hooks:
+    - id: packer-validate

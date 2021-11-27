@@ -3,10 +3,10 @@
 # No empty line breaks allowed...
 source "file" "answers" {
   content = templatefile("${path.root}/templates/answers.pkrtpl", {
-    keyboard_layout   = local.keyboard_layout
-    keyboard_variant  = local.keyboard_variant
-    template_name     = var.template_name
-    timezone          = local.timezone
+    keyboard_layout  = local.keyboard_layout
+    keyboard_variant = local.keyboard_variant
+    template_name    = var.template_name
+    timezone         = local.timezone
   })
-  target =  "${path.root}/http/answers"
+  target = "${path.root}/http/answers"
 }
