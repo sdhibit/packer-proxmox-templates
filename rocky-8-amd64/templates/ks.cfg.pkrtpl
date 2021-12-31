@@ -1,0 +1,102 @@
+#version=RHEL8
+
+## Keyboard layouts
+keyboard --vckeymap=${keyboard_keymap} --xlayouts='${keyboard_layout}'
+## System language
+lang ${language}
+## System timezone
+timezone ${timezone}
+
+# Install from a CDROM
+cdrom
+text
+
+# Repo Mirrorlist
+#repo --name=AppStream --mirrorlist=https://mirrors.rockylinux.org/mirrorlist?arch=$basearch&repo=AppStream-$releasever
+
+# System authorization
+rootpw --iscrypted ${root_password}
+
+## Do not configure the X Window System
+skipx
+
+## Drive Partition
+ignoredisk --only-use=sda
+zerombr
+autopart --type=plain
+
+## Partition clearing information
+clearpart --none --initlabel --drives=sda
+
+## Network information
+network --bootproto=dhcp --device=ens18 --noipv6 --activate
+network --hostname=localhost.localdomain
+
+## System services
+services --disabled="kdump" --enabled="sshd"
+
+## Firewall
+firewall --service=ssh
+
+## SELinux
+selinux --enforcing
+
+## Username
+user --name=${ssh_username} --groups=wheel --password=${ssh_password} --iscrypted
+%{ if ssh_public_key != null ~}
+sshkey --username=${ssh_username} "${ssh_public_key}"
+%{ endif ~}
+
+firstboot --disabled
+eula --agreed
+
+reboot
+
+%packages --ignoremissing --excludedocs
+
+@^minimal-environment
+qemu-guest-agent
+python3
+python3-libselinux
+
+# unnecessary firmware
+-aic94xx-firmware
+-atmel-firmware
+-b43-openfwwf
+-bfa-firmware
+-ipw2100-firmware
+-ipw2200-firmware
+-ivtv-firmware
+-iwl100-firmware
+-iwl1000-firmware
+-iwl3945-firmware
+-iwl4965-firmware
+-iwl5000-firmware
+-iwl5150-firmware
+-iwl6000-firmware
+-iwl6000g2a-firmware
+-iwl6050-firmware
+-libertas-usb8388-firmware
+-ql2100-firmware
+-ql2200-firmware
+-ql23xx-firmware
+-ql2400-firmware
+-ql2500-firmware
+-rt61pci-firmware
+-rt73usb-firmware
+-xorg-x11-drv-ati-firmware
+-zd1211-firmware
+
+%end
+
+%addon com_redhat_kdump --enable --reserve-mb='auto'
+%end
+
+%post
+
+# sudo
+sed -i "s/^.*requiretty/#Defaults requiretty/" /etc/sudoers
+echo '${ssh_username} ALL=(ALL) NOPASSWD: ALL' >> /etc/sudoers.d/packer
+chmod 440 /etc/sudoers.d/packer
+
+%end
