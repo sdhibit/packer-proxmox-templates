@@ -1,0 +1,41 @@
+#!/bin/sh
+
+set -ex
+
+rc-service sshd stop
+
+# Set script variables from packer
+SSH_PUBLIC_KEY="${ ssh_public_key }"
+USE_PUBLIC_KEY_AUTH="${ use_public_key_auth }"
+
+# Update apk repositories
+sed -r -i '\|/v[0-9]+\.[0-9]+/community|s|^#\s?||g' /etc/apk/repositories
+apk update
+
+# Add qemu-guest-agent
+apk add qemu-guest-agent
+echo -e GA_PATH="/dev/vport2p1" >> /etc/conf.d/qemu-guest-agent
+rc-update add qemu-guest-agent
+rc-service qemu-guest-agent restart
+
+# Add root user authorized_keys
+if [ "$USE_PUBLIC_KEY_AUTH" = "true" ]
+then
+  mkdir ~/.ssh
+  chmod 700 ~/.ssh
+  echo $SSH_PUBLIC_KEY >> ~/.ssh/authorized_keys
+  chmod 600 ~/.ssh/authorized_keys
+fi
+
+# Update ssh configuration
+if [ "$USE_PUBLIC_KEY_AUTH" = "true" ]
+then
+  sed -r -i "s/^#?PubkeyAuthentication.*/PubkeyAuthentication yes/g" /etc/ssh/sshd_config
+  sed -r -i "s/^#?PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config
+  sed -r -i "s/^#?PermitRootLogin.*/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config
+else
+  sed -r -i "s/^#?PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
+  sed -r -i "s/^#?PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config
+fi
+
+rc-service sshd restart
