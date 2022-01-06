@@ -17,16 +17,12 @@ locals {
   keyboard_layout  = var.keyboard_layout
   keyboard_variant = var.keyboard_variant
   timezone         = var.timezone
+  dns_servers      = var.dns_servers
 
   root_password = coalesce(var.root_password, uuidv4())
 
-  ssh_username         = var.ssh_username
-  ssh_password         = var.ssh_password
+  ssh_agent_auth       = var.ssh_agent_auth
   ssh_private_key_file = var.ssh_private_key_file
   ssh_public_key       = var.ssh_public_key
-
-  ssh_public_keys = compact([
-    local.ssh_public_key
-  ])
 
 }

@@ -1,12 +1,14 @@
 KEYMAPOPTS="${ keyboard_layout } ${ keyboard_variant }"
-HOSTNAMEOPTS="-n ${ template_name }"
+HOSTNAMEOPTS="-n localhost.localdomain"
 INTERFACESOPTS="auto lo
 iface lo inet loopback
 
 auto eth0
 iface eth0 inet dhcp
 "
-DNSOPTS="-n 8.8.8.8"
+%{ if length(dns_servers) > 0 ~}
+DNSOPTS="-n ${join(" ", dns_servers)}"
+%{ endif ~}
 TIMEZONEOPTS="-z ${ timezone }"
 PROXYOPTS="none"
 APKREPOSOPTS="-1"

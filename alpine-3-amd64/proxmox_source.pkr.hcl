@@ -29,9 +29,10 @@ source "proxmox" "alpine" {
   }
 
   disks {
-    disk_size         = "512M"
+    disk_size         = "1G"
     storage_pool      = local.disk_storage_pool
     storage_pool_type = local.disk_storage_pool_type
+    format            = "raw"
     type              = "scsi"
   }
 
@@ -42,58 +43,38 @@ source "proxmox" "alpine" {
   http_interface    = var.http_interface
   vm_interface      = var.vm_interface
 
-  boot = null // "order=scsi0;ide2",
+  boot = null
+
   boot_command = [
     "root<enter><wait>",
-    "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>",
-    "wget ${local.http_url}/answers && sed -i 's/\\r$//g' $PWD/answers<enter><wait>", #Replace CR if file was generated on Windows machine
-    "setup-alpine -f $PWD/answers<enter><wait5>",
+    "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>", # Start networking with DHCP
+    "wget ${local.http_url}/answers<enter><wait>",      #Replace CR if file was generated on Windows machine
+    "sed -i 's/\\r$//g' $PWD/answers<enter><wait>",
+    "USERANSERFILE=1 setup-alpine -f $PWD/answers<enter><wait5>", # Run alpine installer
     "${local.root_password}<enter><wait>",
     "${local.root_password}<enter><wait>",
     "<wait20>",
     "y<enter><wait20>",
-    "mount /dev/sda3 /mnt<enter>", # TODO: change to variable if LVM is set: /dev/vg0/lv_root
-    "mount /dev/ /mnt/dev/ --bind <enter>",
-    "mount -t proc none /mnt/proc <enter>",
-    "mount -o bind /sys /mnt/sys <enter>",
-    "chroot /mnt /bin/sh -l <enter><wait>",
-    "sed -r -i '\\|/v[0-9]+\\.[0-9]+/community|s|^#||g' /etc/apk/repositories <enter><wait>",
-    "echo -e 'nameserver 1.1.1.1' > /etc/resolv.conf <enter><wait>",
-    "apk update <enter><wait10>",
-    "apk add sudo <enter><wait>",
-    "apk add openssh-server-pam <enter><wait>",
-    "echo 'UsePAM yes' >> /etc/ssh/sshd_config <enter><wait>",
-    "apk add 'qemu-guest-agent' <enter><wait>",
-    "apk add 'partx' 'ifupdown-ng' 'iproute2-minimal' 'cloud-init' <enter><wait>",
-    "echo -e GA_PATH=\"/dev/vport2p1\" >> /etc/conf.d/qemu-guest-agent <enter><wait>", # ls /dev/vport*
-    "rc-update add qemu-guest-agent<enter><wait>",
-    "setup-cloud-init <enter><wait>",
-    "echo 'datasource_list: [ NoCloud, ConfigDrive, None ]' > /etc/cloud/cloud.cfg.d/99_pve.cfg <enter><wait>",
-    "mkdir -p /var/lib/cloud/seed/nocloud-net <enter><wait>",
-    "wget -P /var/lib/cloud/seed/nocloud-net ${local.http_url}/meta-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/meta-data <enter><wait>",
-    "wget -P /var/lib/cloud/seed/nocloud-net ${local.http_url}/user-data && sed -i 's/\\r$//g' /var/lib/cloud/seed/nocloud-net/user-data <enter><wait>",
-    "echo 'isofs' > /etc/modules-load.d/isofs.conf && chmod -x /etc/modules-load.d/isofs.conf <enter><wait>", # Add iso9660 as a valid filesystem. Necessary for cloud-init to mount NoData with proxmox cloud-init drive (/dev/sr[0-9]).
-    "exit <enter><wait>",
-    "umount /mnt/sys <enter><wait>",
-    "umount /mnt/proc <enter><wait>",
-    "umount /mnt/dev <enter><wait>",
-    "umount /mnt <enter>",
-    "reboot <enter>",
+    "reboot<enter>",
+    "<wait30>",
+    "root<enter>",
+    "${var.root_password}<enter><wait>",
+    "wget ${local.http_url}/alpine-setup.sh<enter><wait>",
+    "chmod +x $PWD/alpine-setup.sh<enter><wait>",
+    "sed -i 's/\\r$//g' $PWD/alpine-setup.sh<enter><wait>",
+    "$PWD/alpine-setup.sh<enter><wait>",
   ]
 
   boot_wait = "20s"
 
   ssh_handshake_attempts    = 100
-  ssh_username              = local.ssh_username
-  ssh_password              = local.ssh_password
+  ssh_username              = "root"
+  ssh_password              = local.ssh_public_key == null ? local.root_password : null
   ssh_private_key_file      = local.ssh_private_key_file
   ssh_clear_authorized_keys = true
-  ssh_timeout               = "20m"
+  ssh_timeout               = "45m"
   ssh_agent_auth            = var.ssh_agent_auth
 
-  cloud_init = true
-  // latest proxmox API requires this to be set in order for a cloud init image to be created.
-  // Does not take boot disk storage pool as a default anymore.
+  cloud_init              = true
   cloud_init_storage_pool = local.cloud_init_storage_pool
-
 }

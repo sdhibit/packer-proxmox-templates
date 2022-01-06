@@ -56,25 +56,13 @@ variable "template_name" {
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Alpine 3.12"
+  default     = "Base template for Alpine 3."
 }
 
 variable "template_vm_id" {
   type        = number
   description = "The ID used to reference the virtual machine. This will also be the ID of the final template. If not given, the next free ID on the node will be used."
   default     = null
-}
-
-variable "ssh_username" {
-  type        = string
-  description = "The username to connect to SSH with."
-  default     = "packer"
-}
-
-variable "ssh_password" {
-  type        = string
-  description = "A plaintext password to use to authenticate with SSH."
-  default     = "packer"
 }
 
 variable "ssh_private_key_file" {
@@ -99,12 +87,13 @@ variable "root_password" {
   type        = string
   description = "root password to use during the setup process. A random password will be used if null."
   default     = null
+  sensitive   = true
 }
 
 variable "memory" {
   type        = number
   description = "How much memory, in megabytes, to give the virtual machine."
-  default     = 2048
+  default     = 512
 }
 
 variable "cores" {
@@ -122,7 +111,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "http://dl-cdn.alpinelinux.org/alpine/v3.14/releases/x86_64/alpine-virt-3.14.3-x86_64.iso"
+  default     = "http://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-virt-3.15.0-x86_64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -134,7 +123,7 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"alpine-virt-3.14.3-x86_64.iso"
+  default     = null # "alpine-virt-3.15.0-x86_64.iso"
 }
 
 variable "iso_checksum" {
@@ -179,12 +168,6 @@ variable "network_bridge" {
   default     = "vmbr0"
 }
 
-# variable "locale" {
-#   type        = string
-#   description = "The system locale set during the subiquity install."
-#   default     = "en_US"
-# }
-
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the setup-alpine install."
@@ -200,5 +183,16 @@ variable "keyboard_variant" {
 variable "timezone" {
   type        = string
   description = "Sets the timezone during the setup-alpine install."
-  default     = "Etc/UTC"
+  default     = "UTC"
+}
+
+variable "dns_servers" {
+  type        = list(string)
+  description = "Sets the DNS servers during the setup-alpin install."
+  default     = []
+
+  validation {
+    condition     = var.dns_servers != null
+    error_message = "The DNS server list must not be null. An empty list is allowed."
+  }
 }
