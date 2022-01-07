@@ -37,7 +37,7 @@ autoinstall:
     timezone: ${ timezone }
     users:
       - name: ${ ssh_username }
-        passwd: ${ bcrypt(ssh_password) }
+        passwd: ${ ssh_password }
         groups: [adm, cdrom, dip, plugdev, lxd, sudo]
         lock-passwd: %{ if length(ssh_public_keys) > 0 }true%{ else }false%{ endif }
         sudo: ALL=(ALL) NOPASSWD:ALL

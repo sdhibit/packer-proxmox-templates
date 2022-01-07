@@ -5,10 +5,12 @@ build {
     "source.proxmox.ubuntu"
   ]
 
+  # Wait for cloud-init to complete after reboot
   provisioner "shell" {
     inline = ["while [ ! -f /var/lib/cloud/instance/boot-finished ]; do echo 'Waiting for cloud-init...'; sleep 1; done"]
   }
 
+  # Clean up subiquity installer
   provisioner "shell" {
     execute_command = "sudo /bin/sh -c '{{ .Vars }} {{ .Path }}'"
     inline = [
@@ -17,17 +19,19 @@ build {
     ]
   }
 
+  # Disable packer provisioner access
   provisioner "shell" {
     environment_vars = [
-      "USERNAME=${local.ssh_username}"
+      "SSH_USERNAME=${var.ssh_username}"
     ]
     skip_clean      = true
-    execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }} ; rm -f {{ .Path }}"
-    inline_shebang  = "/bin/bash -e"
+    execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }}; rm -f {{ .Path }}"
     inline = [
+      "passwd -d $SSH_USERNAME",
+      "passwd -l $SSH_USERNAME",
+      "rm -rf /home/$SSH_USERNAME/.ssh/authorized_keys",
       "rm -f /etc/sudoers.d/90-cloud-init-users",
     ]
-
   }
 
 }
