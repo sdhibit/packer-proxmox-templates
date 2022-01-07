@@ -25,14 +25,15 @@ source "proxmox" "rocky" {
 
   network_adapters {
     model  = "virtio"
-    bridge = "vmbr0"
+    bridge = var.network_bridge
   }
 
   disks {
-    disk_size         = "5G"
-    storage_pool      = local.disk_storage_pool
-    storage_pool_type = local.disk_storage_pool_type
-    type              = "scsi"
+    disk_size         = var.disk_size
+    storage_pool      = var.disk_storage_pool
+    storage_pool_type = var.disk_storage_pool_type
+    format            = var.disk_format
+    type              = var.disk_type
   }
 
   http_directory    = "http"
@@ -47,9 +48,9 @@ source "proxmox" "rocky" {
   boot_wait    = "5s"
 
   ssh_handshake_attempts    = 100
-  ssh_username              = local.ssh_username
-  ssh_password              = local.ssh_password
-  ssh_private_key_file      = local.ssh_private_key_file
+  ssh_username              = var.ssh_username
+  ssh_password              = var.ssh_password
+  ssh_private_key_file      = var.ssh_private_key_file
   ssh_clear_authorized_keys = true
   ssh_timeout               = "45m"
   ssh_agent_auth            = var.ssh_agent_auth

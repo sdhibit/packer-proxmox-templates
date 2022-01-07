@@ -47,7 +47,7 @@ build {
   # Disable packer provisioner access
   provisioner "shell" {
     environment_vars = [
-      "SSH_USERNAME=${local.ssh_username}"
+      "SSH_USERNAME=${var.ssh_username}"
     ]
     skip_clean      = true
     execute_command = "sudo /bin/sh -c '{{ .Vars }} {{ .Path }}'"
