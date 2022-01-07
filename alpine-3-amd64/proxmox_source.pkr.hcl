@@ -25,15 +25,15 @@ source "proxmox" "alpine" {
 
   network_adapters {
     model  = "virtio"
-    bridge = local.network_bridge
+    bridge = var.network_bridge
   }
 
   disks {
-    disk_size         = "1G"
-    storage_pool      = local.disk_storage_pool
-    storage_pool_type = local.disk_storage_pool_type
-    format            = "raw"
-    type              = "scsi"
+    disk_size         = var.disk_size
+    storage_pool      = var.disk_storage_pool
+    storage_pool_type = var.disk_storage_pool_type
+    format            = var.disk_format
+    type              = var.disk_type
   }
 
   http_directory    = "http"
@@ -58,7 +58,7 @@ source "proxmox" "alpine" {
     "reboot<enter>",
     "<wait30>",
     "root<enter>",
-    "${var.root_password}<enter><wait>",
+    "${local.root_password}<enter><wait>",
     "wget ${local.http_url}/alpine-setup.sh<enter><wait>",
     "chmod +x $PWD/alpine-setup.sh<enter><wait>",
     "sed -i 's/\\r$//g' $PWD/alpine-setup.sh<enter><wait>",
@@ -69,8 +69,8 @@ source "proxmox" "alpine" {
 
   ssh_handshake_attempts    = 100
   ssh_username              = "root"
-  ssh_password              = local.ssh_public_key == null ? local.root_password : null
-  ssh_private_key_file      = local.ssh_private_key_file
+  ssh_password              = var.ssh_public_key == null ? local.root_password : null
+  ssh_private_key_file      = var.ssh_private_key_file
   ssh_clear_authorized_keys = true
   ssh_timeout               = "45m"
   ssh_agent_auth            = var.ssh_agent_auth

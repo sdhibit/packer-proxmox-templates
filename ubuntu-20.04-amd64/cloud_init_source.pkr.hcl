@@ -5,14 +5,14 @@ source "file" "meta_data" {
 
 source "file" "user_data" {
   content = templatefile("${path.root}/templates/user-data.pkrtpl", {
-    locale                  = local.locale
-    timezone                = local.timezone
-    keyboard_layout         = local.keyboard_layout
-    keyboard_variant        = local.keyboard_variant
-    ssh_username            = local.ssh_username
-    ssh_password            = local.ssh_password
-    ssh_public_keys         = local.ssh_public_keys
-    cloud_init_apt_packages = local.cloud_init_apt_packages
+    locale                  = var.locale
+    timezone                = var.timezone
+    keyboard_layout         = var.keyboard_layout
+    keyboard_variant        = var.keyboard_variant
+    ssh_username            = var.ssh_username
+    ssh_password            = bcrypt(var.ssh_password)
+    ssh_public_keys         = compact([var.ssh_public_key])
+    cloud_init_apt_packages = var.cloud_init_apt_packages
   })
   target = "${path.root}/http/user-data"
 }

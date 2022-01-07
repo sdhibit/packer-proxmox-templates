@@ -17,16 +17,6 @@ variable "proxmox_password" {
   sensitive   = true
 }
 
-variable "disk_storage_pool" {
-  type        = string
-  description = "Storage pool for the boot disk and cloud-init image."
-}
-
-variable "disk_storage_pool_type" {
-  type        = string
-  description = "Storage pool type for the boot disk and cloud-init image."
-}
-
 ##### Optional Variables #####
 
 variable "proxmox_port" {
@@ -102,6 +92,61 @@ variable "root_password" {
   default     = null
 }
 
+variable "disk_storage_pool" {
+  type        = string
+  description = "Storage pool for the boot disk and cloud-init image."
+  default     = "local-lvm"
+
+  validation {
+    condition     = var.disk_storage_pool != null
+    error_message = "The disk storage pool must not be null."
+  }
+}
+
+variable "disk_storage_pool_type" {
+  type        = string
+  description = "Storage pool type for the boot disk."
+  default     = "lvm-thin"
+
+  validation {
+    condition     = contains(["lvm", "lvm-thin", "zfspool", "cephfs", "rbd", "directory"], var.disk_storage_pool_type)
+    error_message = "The storage pool type must be either 'lvm', 'lvm-thin', 'zfspool', 'cephfs', 'rbd', or 'directory'."
+  }
+}
+
+variable "disk_size" {
+  type        = string
+  description = "The size of the OS disk, including a size suffix. The suffix must be 'K', 'M', or 'G'."
+  default     = "5G"
+
+  validation {
+    condition     = can(regex("^\\d+[GMK]$", var.disk_size))
+    error_message = "The disk size is not valid. It must be a number with a size suffix (K, M, G)."
+  }
+}
+
+variable "disk_format" {
+  type        = string
+  description = "The format of the file backing the disk."
+  default     = "raw"
+
+  validation {
+    condition     = contains(["raw", "cow", "qcow", "qed", "qcow2", "vmdk", "cloop"], var.disk_format)
+    error_message = "The storage pool type must be either 'raw', 'cow', 'qcow', 'qed', 'qcow2', 'vmdk', or 'cloop'."
+  }
+}
+
+variable "disk_type" {
+  type        = string
+  description = "The type of disk device to add."
+  default     = "scsi"
+
+  validation {
+    condition     = contains(["ide", "sata", "scsi", "virtio"], var.disk_type)
+    error_message = "The storage pool type must be either 'ide', 'sata', 'scsi', or 'virtio'."
+  }
+}
+
 variable "memory" {
   type        = number
   description = "How much memory, in megabytes, to give the virtual machine."
@@ -172,6 +217,12 @@ variable "vm_interface" {
   type        = string
   description = "Name of the network interface that Packer gets the VMs IP from."
   default     = null
+}
+
+variable "network_bridge" {
+  type        = string
+  description = "The Proxmox network bridge to use for the network interface."
+  default     = "vmbr0"
 }
 
 variable "cloud_init_storage_pool" {

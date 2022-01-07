@@ -17,16 +17,6 @@ variable "proxmox_password" {
   sensitive   = true
 }
 
-variable "disk_storage_pool" {
-  type        = string
-  description = "Storage pool for the boot disk and cloud-init image."
-}
-
-variable "disk_storage_pool_type" {
-  type        = string
-  description = "Storage pool type for the boot disk and cloud-init image."
-}
-
 ##### Optional Variables #####
 
 variable "proxmox_port" {
@@ -50,7 +40,7 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "alpine-virt-3-template"
+  default     = "alpine-3-template-cloudinit"
 }
 
 variable "template_description" {
@@ -88,6 +78,61 @@ variable "root_password" {
   description = "root password to use during the setup process. A random password will be used if null."
   default     = null
   sensitive   = true
+}
+
+variable "disk_storage_pool" {
+  type        = string
+  description = "Storage pool for the boot disk and cloud-init image."
+  default     = "local-lvm"
+
+  validation {
+    condition     = var.disk_storage_pool != null
+    error_message = "The disk storage pool must not be null."
+  }
+}
+
+variable "disk_storage_pool_type" {
+  type        = string
+  description = "Storage pool type for the boot disk."
+  default     = "lvm-thin"
+
+  validation {
+    condition     = contains(["lvm", "lvm-thin", "zfspool", "cephfs", "rbd", "directory"], var.disk_storage_pool_type)
+    error_message = "The storage pool type must be either 'lvm', 'lvm-thin', 'zfspool', 'cephfs', 'rbd', or 'directory'."
+  }
+}
+
+variable "disk_size" {
+  type        = string
+  description = "The size of the OS disk, including a size suffix. The suffix must be 'K', 'M', or 'G'."
+  default     = "512M"
+
+  validation {
+    condition     = can(regex("^\\d+[GMK]$", var.disk_size))
+    error_message = "The disk size is not valid. It must be a number with a size suffix (K, M, G)."
+  }
+}
+
+variable "disk_format" {
+  type        = string
+  description = "The format of the file backing the disk."
+  default     = "raw"
+
+  validation {
+    condition     = contains(["raw", "cow", "qcow", "qed", "qcow2", "vmdk", "cloop"], var.disk_format)
+    error_message = "The storage pool type must be either 'raw', 'cow', 'qcow', 'qed', 'qcow2', 'vmdk', or 'cloop'."
+  }
+}
+
+variable "disk_type" {
+  type        = string
+  description = "The type of disk device to add."
+  default     = "scsi"
+
+  validation {
+    condition     = contains(["ide", "sata", "scsi", "virtio"], var.disk_type)
+    error_message = "The storage pool type must be either 'ide', 'sata', 'scsi', or 'virtio'."
+  }
 }
 
 variable "memory" {
@@ -168,6 +213,12 @@ variable "network_bridge" {
   default     = "vmbr0"
 }
 
+variable "cloud_init_storage_pool" {
+  type        = string
+  description = "Name of the Proxmox storage pool to store the Cloud-Init CDROM on. If not given, the storage pool of the boot device will be used (disk_storage_pool)."
+  default     = null
+}
+
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the setup-alpine install."
@@ -188,7 +239,7 @@ variable "timezone" {
 
 variable "dns_servers" {
   type        = list(string)
-  description = "Sets the DNS servers during the setup-alpin install."
+  description = "Sets the DNS servers during the setup-alpine install."
   default     = []
 
   validation {
