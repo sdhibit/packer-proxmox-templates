@@ -105,7 +105,7 @@ variable "disk_storage_pool_type" {
 variable "disk_size" {
   type        = string
   description = "The size of the OS disk, including a size suffix. The suffix must be 'K', 'M', or 'G'."
-  default     = "512M"
+  default     = "1G"
 
   validation {
     condition     = can(regex("^\\d+[GMK]$", var.disk_size))

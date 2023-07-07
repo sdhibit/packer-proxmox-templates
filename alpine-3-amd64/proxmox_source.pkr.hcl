@@ -50,14 +50,14 @@ source "proxmox" "alpine" {
     "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>", # Start networking with DHCP
     "wget ${local.http_url}/answers<enter><wait>",      #Replace CR if file was generated on Windows machine
     "sed -i 's/\\r$//g' $PWD/answers<enter><wait>",
-    "USERANSERFILE=1 setup-alpine -f $PWD/answers<enter><wait5>", # Run alpine installer
+    "USERANSERFILE=1 setup-alpine -f $PWD/answers<enter><wait10>", # Run alpine installer
     "${local.root_password}<enter><wait>",
     "${local.root_password}<enter><wait>",
-    "<wait20>",
+    "no<enter><wait10>",
     "y<enter><wait20>",
     "reboot<enter>",
     "<wait30>",
-    "root<enter>",
+    "root<enter><wait>",
     "${local.root_password}<enter><wait>",
     "wget ${local.http_url}/alpine-setup.sh<enter><wait>",
     "chmod +x $PWD/alpine-setup.sh<enter><wait>",
