@@ -11,7 +11,7 @@ DNSOPTS="-n ${join(" ", dns_servers)}"
 %{ endif ~}
 TIMEZONEOPTS="-z ${ timezone }"
 PROXYOPTS="none"
-APKREPOSOPTS="-1"
+APKREPOSOPTS="-1 -c"
 SSHDOPTS="-c openssh"
 NTPOPTS="-c chrony"
 DISKOPTS="-m sys /dev/sda"
