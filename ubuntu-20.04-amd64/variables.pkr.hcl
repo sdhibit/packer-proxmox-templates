@@ -96,17 +96,6 @@ variable "disk_storage_pool" {
   }
 }
 
-variable "disk_storage_pool_type" {
-  type        = string
-  description = "Storage pool type for the boot disk."
-  default     = "lvm-thin"
-
-  validation {
-    condition     = contains(["lvm", "lvm-thin", "zfspool", "cephfs", "rbd", "directory"], var.disk_storage_pool_type)
-    error_message = "The storage pool type must be either 'lvm', 'lvm-thin', 'zfspool', 'cephfs', 'rbd', or 'directory'."
-  }
-}
-
 variable "disk_size" {
   type        = string
   description = "The size of the OS disk, including a size suffix. The suffix must be 'K', 'M', or 'G'."
