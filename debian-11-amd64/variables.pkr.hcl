@@ -40,13 +40,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-20.04-base"
+  default     = "debian-11.7-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 20.04"
+  default     = "Base template for Debian 11.7."
 }
 
 variable "template_vm_id" {
@@ -98,17 +98,6 @@ variable "disk_storage_pool" {
   validation {
     condition     = var.disk_storage_pool != null
     error_message = "The disk storage pool must not be null."
-  }
-}
-
-variable "disk_storage_pool_type" {
-  type        = string
-  description = "Storage pool type for the boot disk."
-  default     = "lvm-thin"
-
-  validation {
-    condition     = contains(["lvm", "lvm-thin", "zfspool", "cephfs", "rbd", "directory"], var.disk_storage_pool_type)
-    error_message = "The storage pool type must be either 'lvm', 'lvm-thin', 'zfspool', 'cephfs', 'rbd', or 'directory'."
   }
 }
 
@@ -166,7 +155,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
+  default     = "https://cdimage.debian.org/mirror/cdimage/archive/11.7.0/amd64/iso-cd/debian-11.7.0-amd64-netinst.iso"
 }
 
 variable "iso_storage_pool" {
@@ -178,13 +167,13 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"ubuntu-20.04.3-live-server-amd64.iso"
+  default     = null //"debian-11.7.0-amd64-netinst.iso"
 }
 
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98"
+  default     = "eb3f96fd607e4b67e80f4fc15670feb7d9db5be50f4ca8d0bf07008cb025766b"
 }
 
 variable "http_server_host" {
