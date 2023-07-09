@@ -1,0 +1,203 @@
+<?xml version="1.0"?>
+<!DOCTYPE profile>
+<profile xmlns="http://www.suse.com/1.0/yast2ns" xmlns:config="http://www.suse.com/1.0/configns">
+
+  <general>
+    <mode>
+      <confirm t="boolean">false</confirm>
+      <forceboot t="boolean">true</forceboot>
+      <final_reboot t="boolean">true</final_reboot>
+    </mode>
+  </general>
+
+  <report>
+    <messages>
+      <show t="boolean">false</show>
+      <timeout t="integer">10</timeout>
+      <log t="boolean">true</log>
+    </messages>
+    <warnings>
+      <show t="boolean">false</show>
+      <timeout t="integer">10</timeout>
+      <log t="boolean">true</log>
+    </warnings>
+    <errors>
+      <show t="boolean">false</show>
+      <timeout t="integer">10</timeout>
+      <log t="boolean">true</log>
+    </errors>
+  </report>
+
+  <keyboard>
+    <keymap>${ keyboard_keymap }</keymap>
+  </keyboard>
+  <language>
+    <language>${ language }</language>
+  </language>
+  <timezone>
+    <hwclock>%{ if is_hwclock_utc }UTC%{ else }local%{ endif }</hwclock>
+    <timezone>${ timezone }</timezone>
+  </timezone>
+
+  <partitioning t="list">
+    <drive>
+      <enable_snapshots t="boolean">false</enable_snapshots>
+      <initialize t="boolean">true</initialize>
+      <partitions t="list">
+        <partition>
+          <create t="boolean">true</create>
+          <crypt_fs t="boolean">false</crypt_fs>
+          <filesystem t="symbol">ext4</filesystem>
+          <format t="boolean">true</format>
+          <loop_fs t="boolean">false</loop_fs>
+          <mount>/</mount>
+          <mountby t="symbol">device</mountby>
+          <partition_id t="integer">131</partition_id>
+          <partition_nr t="integer">2</partition_nr>
+          <raid_options />
+          <resize t="boolean">false</resize>
+          <size>max</size>
+          <subvolumes t="list">
+            <listentry>boot/grub2/i386-pc</listentry>
+            <listentry>boot/grub2/x86_64-efi</listentry>
+            <listentry>home</listentry>
+            <listentry>opt</listentry>
+            <listentry>srv</listentry>
+            <listentry>tmp</listentry>
+            <listentry>usr/local</listentry>
+            <listentry>var/crash</listentry>
+            <listentry>var/log</listentry>
+            <listentry>var/opt</listentry>
+            <listentry>var/spool</listentry>
+            <listentry>var/tmp</listentry>
+          </subvolumes>
+        </partition>
+      </partitions>
+      <pesize />
+      <type t="symbol">CT_DISK</type>
+      <use>all</use>
+    </drive>
+  </partitioning>
+
+  <bootloader>
+    <loader_type>grub2</loader_type>
+		<global>
+			<activate>true</activate>
+			<timeout t="integer">1</timeout>
+			<boot_mbr>true</boot_mbr>
+		</global>
+  </bootloader>
+
+  <networking>
+    <ipv6 t="boolean">false</ipv6>
+    <keep_install_network t="boolean">true</keep_install_network>
+    <dns>
+      <dhcp_hostname t="boolean">true</dhcp_hostname>
+      <resolv_conf_policy>auto</resolv_conf_policy>
+      <domain>vagrantup.com</domain>
+      <hostname>opensuse-leap-x64</hostname>
+    </dns>
+    <interfaces t="list">
+      <interface>
+        <bootproto>dhcp</bootproto>
+        <name>eth0</name>
+        <startmode>auto</startmode>
+        <usercontrol>no</usercontrol>
+      </interface>
+    </interfaces>
+  </networking>
+
+  <firewall>
+    <enable_firewall t="boolean">false</enable_firewall>
+    <start_firewall t="boolean">false</start_firewall>
+  </firewall>
+
+  <software>
+    <packages t="list">
+      <package>grub2</package>
+      <package>kernel-default</package>
+      <package>sudo</package>
+      <package>wget</package>
+      <package>curl</package>
+      <package>growpart</package>
+      <package>qemu-guest-agent</package>
+    </packages>
+    <patterns t="list">
+      <pattern>base</pattern>
+      <pattern>minimal_base</pattern>
+      <pattern>sw_management</pattern>
+      <pattern>yast2_basis</pattern>
+      <pattern>yast2_install_wf</pattern>
+    </patterns>
+    <remove-packages t="list">
+      <package>bash-completion</package>
+      <package>telnet</package>
+      <package>virtualbox-guest-kmp-default</package>
+      <package>virtualbox-guest-tools</package>
+      <package>snapper</package>
+      <package>snapper-zypp-plugin</package>
+    </remove-packages>
+  </software>
+
+  <services-manager>
+    <default_target>multi-user</default_target>
+    <services>
+      <disable t="list" />
+      <enable t="list">
+        <service>sshd</service>
+        <service>qemu-guest-agent</service>
+      </enable>
+    </services>
+  </services-manager>
+
+  <groups t="list">
+    <group>
+      <gid>100</gid>
+      <groupname>users</groupname>
+      <userlist />
+    </group>
+  </groups>
+
+  <user_defaults>
+    <expire />
+    <group>100</group>
+    <groups />
+    <home>/home</home>
+    <inactive>-1</inactive>
+    <no_groups t="boolean">true</no_groups>
+    <shell>/bin/bash</shell>
+    <skel>/etc/skel</skel>
+    <umask>022</umask>
+  </user_defaults>
+
+  <users t="list">
+    <user>
+      <fullname>Built by Packer</fullname>
+      <gid>100</gid>
+      <home>/home/${ ssh_username }</home>
+      <password_settings>
+        <expire />
+        <flag />
+        <inact>-1</inact>
+        <max>99999</max>
+        <min>0</min>
+        <warn>7</warn>
+      </password_settings>
+      <shell>/bin/bash</shell>
+      <uid>1000</uid>
+      <encrypted t="boolean">true</encrypted>
+      <user_password>${ ssh_encrypted_password }</user_password>
+      <username>${ ssh_username }</username>
+%{ if ssh_public_key != null ~}
+      <authorized_keys t="list">
+        <listentry>${ ssh_public_key }</listentry>
+      </authorized_keys>
+%{ endif ~}
+    </user>
+  </users>
+
+  <kdump>
+    <add_crash_kernel t="boolean">false</add_crash_kernel>
+  </kdump>
+
+</profile>
