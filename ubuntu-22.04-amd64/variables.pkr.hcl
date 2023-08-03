@@ -40,13 +40,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-20.04-base"
+  default     = "ubuntu-22.04-base"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 20.04"
+  default     = "Base template for Ubuntu 22.04"
 }
 
 variable "template_vm_id" {
