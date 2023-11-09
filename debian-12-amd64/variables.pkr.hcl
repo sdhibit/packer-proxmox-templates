@@ -40,13 +40,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "debian-12.0-cloudinit"
+  default     = "debian-12.2-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Debian 12.0."
+  default     = "Base template for Debian 12.2."
 }
 
 variable "template_vm_id" {
@@ -155,7 +155,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://cdimage.debian.org/mirror/cdimage/release/12.0.0/amd64/iso-cd/debian-12.0.0-amd64-netinst.iso"
+  default     = "https://cdimage.debian.org/mirror/cdimage/release/12.2.0/amd64/iso-cd/debian-12.2.0-amd64-netinst.iso"
 }
 
 variable "iso_storage_pool" {
@@ -173,7 +173,7 @@ variable "iso_file" {
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "3b0e9718e3653435f20d8c2124de6d363a51a1fd7f911b9ca0c6db6b3d30d53e"
+  default     = "23ab444503069d9ef681e3028016250289a33cc7bab079259b73100daee0af66"
 }
 
 variable "http_server_host" {
