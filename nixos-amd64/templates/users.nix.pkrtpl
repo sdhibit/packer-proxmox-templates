@@ -1,0 +1,36 @@
+{ config, pkgs, ... }:
+
+{
+
+  security.sudo.enable = true;
+
+
+  environment.etc = {
+    "sudoers.d/packer" = {
+      text = "${ ssh_username } ALL=(ALL:ALL) NOPASSWD: ALL";
+      mode = "0400";
+    };
+  };
+
+  users.mutableUsers = true;
+
+  users.users = {
+    ${ ssh_username } = {
+      isNormalUser = true;
+      createHome = true;
+      description = "Packer User";
+      extraGroups = [
+        "wheel"
+      ];
+      group = "users";
+      hashedPassword  = "${ ssh_encrypted_password }";
+%{ if length(ssh_public_keys) > 0 ~}
+      openssh.authorizedKeys.keys = [
+%{ for key in ssh_public_keys ~}
+        "${key}"
+%{ endfor ~}
+      ];
+%{ endif ~}
+    };
+  };
+}
