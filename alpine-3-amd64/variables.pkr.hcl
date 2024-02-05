@@ -208,6 +208,12 @@ variable "cloud_init_storage_pool" {
   default     = null
 }
 
+variable "use_openssh_pam" {
+  type        = string
+  description = "Use OpenSSH with PAM support. Will allow locked users to use public key SSH authentication if no password is set."
+  default     = false
+}
+
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the setup-alpine install."
