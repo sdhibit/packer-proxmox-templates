@@ -12,6 +12,7 @@ source "file" "setup" {
   content = templatefile("${path.root}/templates/alpine-setup.sh.pkrtpl", {
     ssh_public_key      = var.ssh_public_key != null ? var.ssh_public_key : ""
     use_public_key_auth = var.ssh_public_key != null ? true : false
+    use_openssh_pam     = var.use_openssh_pam
   })
   target = "${path.root}/http/alpine-setup.sh"
 }
