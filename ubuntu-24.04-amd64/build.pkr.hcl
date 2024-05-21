@@ -20,19 +20,19 @@ build {
     ]
   }
 
-  // # Disable packer provisioner access
-  // provisioner "shell" {
-  //   environment_vars = [
-  //     "SSH_USERNAME=${var.ssh_username}"
-  //   ]
-  //   skip_clean      = true
-  //   execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }}; rm -f {{ .Path }}"
-  //   inline = [
-  //     "passwd -d $SSH_USERNAME",
-  //     "passwd -l $SSH_USERNAME",
-  //     "rm -rf /home/$SSH_USERNAME/.ssh/authorized_keys",
-  //     "rm -f /etc/sudoers.d/90-cloud-init-users",
-  //   ]
-  // }
+  # Disable packer provisioner access
+  provisioner "shell" {
+    environment_vars = [
+      "SSH_USERNAME=${var.ssh_username}"
+    ]
+    skip_clean      = true
+    execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }}; rm -f {{ .Path }}"
+    inline = [
+      "passwd -d $SSH_USERNAME",
+      "passwd -l $SSH_USERNAME",
+      "rm -rf /home/$SSH_USERNAME/.ssh/authorized_keys",
+      "rm -f /etc/sudoers.d/90-cloud-init-users",
+    ]
+  }
 
 }
