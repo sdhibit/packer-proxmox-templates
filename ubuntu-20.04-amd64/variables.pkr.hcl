@@ -40,7 +40,7 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-20.04-base"
+  default     = "ubuntu-20.04-cloudinit"
 }
 
 variable "template_description" {
@@ -88,7 +88,7 @@ variable "ssh_agent_auth" {
 variable "disk_storage_pool" {
   type        = string
   description = "Storage pool for the boot disk and cloud-init image."
-  default     = "local-lvm"
+  default     = "local"
 
   validation {
     condition     = var.disk_storage_pool != null
@@ -150,7 +150,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://releases.ubuntu.com/20.04/ubuntu-20.04.3-live-server-amd64.iso"
+  default     = "https://www.releases.ubuntu.com/20.04/ubuntu-20.04.6-live-server-amd64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -162,13 +162,13 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"ubuntu-20.04.3-live-server-amd64.iso"
+  default     = null
 }
 
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "f8e3086f3cea0fb3fefb29937ab5ed9d19e767079633960ccb50e76153effc98"
+  default     = "b8f31413336b9393ad5d8ef0282717b2ab19f007df2e9ed5196c13d8f9153c8b"
 }
 
 variable "http_server_host" {
@@ -213,7 +213,7 @@ variable "cloud_init_storage_pool" {
   default     = null
 }
 
-variable "cloud_init_apt_packages" {
+variable "apt_packages" {
   type        = list(string)
   description = "A list of apt packages to install during the subiquity cloud-init installer."
   default     = []

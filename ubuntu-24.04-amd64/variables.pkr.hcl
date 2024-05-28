@@ -40,13 +40,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-22.04-base"
+  default     = "ubuntu-24.04-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 22.04"
+  default     = "Base template for Ubuntu 24.04"
 }
 
 variable "template_vm_id" {
@@ -88,7 +88,7 @@ variable "ssh_agent_auth" {
 variable "disk_storage_pool" {
   type        = string
   description = "Storage pool for the boot disk and cloud-init image."
-  default     = "local-lvm"
+  default     = "local"
 
   validation {
     condition     = var.disk_storage_pool != null
@@ -150,7 +150,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://releases.ubuntu.com/22.04/ubuntu-22.04.2-live-server-amd64.iso"
+  default     = "https://releases.ubuntu.com/noble/ubuntu-24.04-live-server-amd64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -162,13 +162,13 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"ubuntu-22.04.2-live-server-amd64.iso"
+  default     = null
 }
 
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "5e38b55d57d94ff029719342357325ed3bda38fa80054f9330dc789cd2d43931"
+  default     = null
 }
 
 variable "http_server_host" {

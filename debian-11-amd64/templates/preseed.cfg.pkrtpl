@@ -68,6 +68,9 @@ d-i pkgsel/upgrade select full-upgrade
 d-i pkgsel/update-policy select none # unattended-upgrades
 d-i pkgsel/include string sudo qemu-guest-agent ca-certificates
 d-i pkgsel/install-language-support boolean false
+%{ if length(apt_packages) > 0 ~}
+d-i pkgsel/include string ${ join(" ", apt_packages) }
+%{ endif ~}
 
 ### Late Commands
 

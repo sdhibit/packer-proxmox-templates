@@ -40,7 +40,7 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "alpine-3-template-cloudinit"
+  default     = "alpine-3-cloudinit"
 }
 
 variable "template_description" {
@@ -83,7 +83,7 @@ variable "root_password" {
 variable "disk_storage_pool" {
   type        = string
   description = "Storage pool for the boot disk and cloud-init image."
-  default     = "local-lvm"
+  default     = "local"
 
   validation {
     condition     = var.disk_storage_pool != null
@@ -145,7 +145,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "http://dl-cdn.alpinelinux.org/alpine/v3.15/releases/x86_64/alpine-virt-3.15.0-x86_64.iso"
+  default     = "https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -157,7 +157,7 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null # "alpine-virt-3.15.0-x86_64.iso"
+  default     = null
 }
 
 variable "iso_checksum" {
@@ -206,6 +206,12 @@ variable "cloud_init_storage_pool" {
   type        = string
   description = "Name of the Proxmox storage pool to store the Cloud-Init CDROM on. If not given, the storage pool of the boot device will be used (disk_storage_pool)."
   default     = null
+}
+
+variable "apk_packages" {
+  type        = list(string)
+  description = "Additional APK packages to install in the base image."
+  default     = []
 }
 
 variable "use_openssh_pam" {

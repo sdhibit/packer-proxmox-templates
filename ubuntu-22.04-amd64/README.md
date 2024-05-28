@@ -3,5 +3,5 @@
 ## Run examples
 
 ```bash
-packer build -var-file=ubuntu-22.04.2.pkrvars.hcl -var-file=example.pkrvars.hcl .
+packer build -var-file=ubuntu-22.04.3.pkrvars.hcl -var-file=example.pkrvars.hcl .
 ```
