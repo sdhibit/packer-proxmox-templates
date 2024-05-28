@@ -19,6 +19,8 @@ echo -e GA_PATH="/dev/vport2p1" >> /etc/conf.d/qemu-guest-agent
 rc-update add qemu-guest-agent
 rc-service qemu-guest-agent restart
 
+
+
 # Add root user authorized_keys
 if [ "$USE_PUBLIC_KEY_AUTH" = "true" ]
 then
@@ -48,6 +50,8 @@ then
   sed -r -i "s/^#?UsePAM.*/UsePAM yes/g" /etc/ssh/sshd_config
 fi
 
-
+%{ if length(apk_packages) > 0 ~}
+apk add ${ join(" ", apk_packages) }
+%{ endif ~}
 
 rc-service sshd restart

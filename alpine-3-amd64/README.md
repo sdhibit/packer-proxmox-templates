@@ -3,5 +3,5 @@
 ## Run examples
 
 ```bash
-packer build -var-file=alpine-3.19.pkrvars.hcl -var-file=example.pkrvars.hcl .
+packer build -var-file=alpine-3.20.pkrvars.hcl -var-file=example.pkrvars.hcl .
 ```

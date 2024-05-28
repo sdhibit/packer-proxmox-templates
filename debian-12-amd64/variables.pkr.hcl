@@ -40,13 +40,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "debian-12.2-cloudinit"
+  default     = "debian-12-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Debian 12.2."
+  default     = "Base template for Debian 12."
 }
 
 variable "template_vm_id" {
@@ -93,7 +93,7 @@ variable "ssh_agent_auth" {
 variable "disk_storage_pool" {
   type        = string
   description = "Storage pool for the boot disk and cloud-init image."
-  default     = "local-lvm"
+  default     = "local"
 
   validation {
     condition     = var.disk_storage_pool != null
@@ -155,7 +155,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://cdimage.debian.org/mirror/cdimage/release/12.2.0/amd64/iso-cd/debian-12.2.0-amd64-netinst.iso"
+  default     = "https://cdimage.debian.org/debian-cd/current/amd64/iso-cd/debian-12.4.0-amd64-netinst.iso"
 }
 
 variable "iso_storage_pool" {
@@ -167,13 +167,13 @@ variable "iso_storage_pool" {
 variable "iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"debian-12.0.0-amd64-netinst.iso"
+  default     = null
 }
 
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "23ab444503069d9ef681e3028016250289a33cc7bab079259b73100daee0af66"
+  default     = "0262488ce2cec6d95a6c9002cfba8b81ac0d1c29fe7993aa5af30f81cecad3eb66558b9d8689a86b57bf12b8cbeab1e11d128a53356b288d48e339bb003dace5"
 }
 
 variable "http_server_host" {
@@ -222,6 +222,12 @@ variable "repository_mirror_url" {
   type        = string
   description = "The debian package repository mirror to use during installation."
   default     = "deb.debian.org"
+}
+
+variable "apt_packages" {
+  type        = list(string)
+  description = "A list of apt packages to install during the pre-seed installer."
+  default     = []
 }
 
 variable "language" {

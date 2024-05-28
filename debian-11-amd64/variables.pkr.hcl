@@ -93,7 +93,7 @@ variable "ssh_agent_auth" {
 variable "disk_storage_pool" {
   type        = string
   description = "Storage pool for the boot disk and cloud-init image."
-  default     = "local-lvm"
+  default     = "local"
 
   validation {
     condition     = var.disk_storage_pool != null
@@ -222,6 +222,12 @@ variable "repository_mirror_url" {
   type        = string
   description = "The debian package repository mirror to use during installation."
   default     = "deb.debian.org"
+}
+
+variable "apt_packages" {
+  type        = list(string)
+  description = "A list of apt packages to install during the pre-seed installer."
+  default     = []
 }
 
 variable "language" {
