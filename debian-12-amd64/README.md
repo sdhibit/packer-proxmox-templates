@@ -3,5 +3,5 @@
 ## Run examples
 
 ```bash
-packer build -var-file=debian-12.4.pkrvars.hcl -var-file=example.pkrvars.hcl .
+packer build -var-file=debian-12.5.pkrvars.hcl -var-file=example.pkrvars.hcl .
 ```
