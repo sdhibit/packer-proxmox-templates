@@ -3,6 +3,7 @@ source "proxmox" "ubuntu" {
   node                     = var.proxmox_node
   username                 = var.proxmox_username
   password                 = var.proxmox_password
+  token                    = var.proxmox_token
   insecure_skip_tls_verify = var.proxmox_skip_verify_tls
 
   template_name        = var.template_name
