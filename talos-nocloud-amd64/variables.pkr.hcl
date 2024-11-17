@@ -39,8 +39,8 @@ variable "proxmox_node" {
 
 variable "talos_version" {
   type        = string
-  description = "The Talos NoCloud version to download and install to disk."
-  default     = "1.4.4"
+  description = "The Talos NoCloud version to download and write to disk."
+  default     = "1.7.4"
 }
 
 variable "template_name" {
@@ -61,35 +61,29 @@ variable "template_vm_id" {
   default     = null
 }
 
-variable "ssh_username" {
-  type        = string
-  description = "The username to connect to SSH with."
-  default     = "root"
-}
-
 variable "ssh_password" {
   type        = string
   description = "A plaintext password to use to authenticate with SSH."
   default     = "packer"
 }
 
-variable "ssh_private_key_file" {
-  type        = string
-  description = "Path to private key file for SSH authentication."
-  default     = null
-}
+// variable "ssh_private_key_file" {
+//   type        = string
+//   description = "Path to private key file for SSH authentication."
+//   default     = null
+// }
 
-variable "ssh_public_key" {
-  type        = string
-  description = "Public key data for SSH authentication. If set, password authentication will be disabled."
-  default     = null
-}
+// variable "ssh_public_key" {
+//   type        = string
+//   description = "Public key data for SSH authentication. If set, password authentication will be disabled."
+//   default     = null
+// }
 
-variable "ssh_agent_auth" {
-  type        = bool
-  description = "Whether to use an exisiting ssh-agent to pass in the SSH private key passphrase."
-  default     = false
-}
+// variable "ssh_agent_auth" {
+//   type        = bool
+//   description = "Whether to use an exisiting ssh-agent to pass in the SSH private key passphrase."
+//   default     = false
+// }
 
 variable "disk_storage_pool" {
   type        = string
@@ -116,7 +110,7 @@ variable "disk_storage_pool" {
 variable "disk_size" {
   type        = string
   description = "The size of the OS disk, including a size suffix. The suffix must be 'K', 'M', or 'G'."
-  default     = "8G"
+  default     = "10G"
 
   validation {
     condition     = can(regex("^\\d+[GMK]$", var.disk_size))
@@ -138,7 +132,7 @@ variable "disk_format" {
 variable "disk_type" {
   type        = string
   description = "The type of disk device to add."
-  default     = "scsi"
+  default     = "virtio"
 
   validation {
     condition     = contains(["ide", "sata", "scsi", "virtio"], var.disk_type)
@@ -164,28 +158,28 @@ variable "sockets" {
   default     = 1
 }
 
-variable "iso_url" {
+variable "boot_iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://mirror.rackspace.com/archlinux/iso/2023.05.03/archlinux-2023.05.03-x86_64.iso"
+  default     = "https://dl-cdn.alpinelinux.org/alpine/v3.20/releases/x86_64/alpine-virt-3.20.0-x86_64.iso"
 }
 
-variable "iso_storage_pool" {
+variable "boot_iso_storage_pool" {
   type        = string
   description = "Proxmox storage pool onto which to find or upload the ISO file."
   default     = "local"
 }
 
-variable "iso_file" {
+variable "boot_iso_file" {
   type        = string
   description = "Filename of the ISO file to boot from."
-  default     = null //"ubuntu-20.04.3-live-server-amd64.iso"
+  default     = null
 }
 
-variable "iso_checksum" {
+variable "boot_iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "sha1:3ae7c83eca8bd698b4e54c49d43e8de5dc8a4456"
+  default     = "27cbb137dbf90c74856fb44f90488066c8bb7aee979365255c63ef925e1de521"
 }
 
 variable "http_server_host" {
@@ -205,7 +199,6 @@ variable "http_bind_address" {
   description = "This is the bind address for the HTTP server. Defaults to 0.0.0.0 so that it will work with any network interface."
   default     = null
 }
-
 
 variable "http_interface" {
   type        = string
