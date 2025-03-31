@@ -1,6 +1,7 @@
 packer_cache
 
 iso/*
+downloaded_iso_path/*
 
 example.pkrvars.hcl
 *.auto.pkrvars.hcl
