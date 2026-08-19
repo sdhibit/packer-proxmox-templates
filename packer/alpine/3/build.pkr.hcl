@@ -11,7 +11,7 @@ build {
     inline = [
       "apk update",
       "apk add --no-cache sudo python3",
-      "apk add --no-cache cloud-init cloud-utils-growpart e2fsprogs-extra",
+      "apk add --no-cache ca-certificates cloud-init cloud-utils-growpart e2fsprogs-extra",
     ]
   }
 
