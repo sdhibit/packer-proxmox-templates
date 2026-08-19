@@ -50,7 +50,7 @@ source "proxmox-iso" "ubuntu" {
   boot_command = [
     "<esc><wait><esc><wait><f6><wait><esc><wait>",
     "<bs><bs><bs><bs><bs>",
-    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp ipv6.disable=1 ds=nocloud-net;s=${local.http_url}/ ",
+    "autoinstall net.ifnames=0 biosdevname=0 ip=dhcp${local.ipv6_cmdline} ds=nocloud-net;s=${local.http_url}/ ",
     "--- <enter>"
   ]
   boot_wait = "5s"

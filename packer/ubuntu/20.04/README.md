@@ -27,4 +27,4 @@ packer build -var-file=ubuntu-20.04.6.pkrvars.hcl -var-file=example.pkrvars.hcl 
 - `user-data` is rendered from [templates/](templates/) with `templatefile`; `meta-data`
   is copied verbatim. Both are served over Packer's HTTP server.
 - Defaults: 1024 MB RAM, 8 G disk, SSH user `packer`.
-- Distinctive variables: `cloud_init_apt_packages`, `locale`, `keyboard_layout`, `keyboard_variant`.
+- Distinctive variables: `cloud_init_apt_packages`, `disable_ipv6`, `locale`, `keyboard_layout`, `keyboard_variant`.

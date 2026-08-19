@@ -36,19 +36,13 @@ build {
       "unset HISTFILE; rm -rf /root/.*history",     # remove command history
       "rm -f /root/alpine-setup.sh",                # remove setup script
       "rm -f /root/.ssh/authorized_keys",
+      # Alpine's seed lives here, not /var/lib/systemd/random-seed
+      "rm -rf /var/lib/seedrng",
       "sed -r -i 's/^#?PermitRootLogin.*/PermitRootLogin no/g' /etc/ssh/sshd_config",
-      "sed -r -i 's/^#?UsePAM.*/UsePam yes/g' /etc/ssh/sshd_config",
-      #"sed -r -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
+      "sed -r -i 's/^#?UsePAM.*/UsePAM yes/g' /etc/ssh/sshd_config",
       "passwd -d root", # Disable root access
       "passwd -l root", # Lock root password
     ]
   }
 
 }
-
-//   sed -r -i "s/^#?PubkeyAuthentication.*/PubkeyAuthentication yes/g" /etc/ssh/sshd_config
-//   sed -r -i "s/^#?PasswordAuthentication.*/PasswordAuthentication no/g" /etc/ssh/sshd_config
-//   sed -r -i "s/^#?PermitRootLogin.*/PermitRootLogin prohibit-password/g" /etc/ssh/sshd_config
-// else
-//   sed -r -i "s/^#?PasswordAuthentication.*/PasswordAuthentication yes/g" /etc/ssh/sshd_config
-//   sed -r -i "s/^#?PermitRootLogin.*/PermitRootLogin yes/g" /etc/ssh/sshd_config

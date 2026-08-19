@@ -32,11 +32,14 @@ autoinstall:
     swap:
       size: 0
   late-commands:
-    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0 ipv6.disable=1 biosdevname=0"/' /target/etc/default/grub
+    - sed -ie 's/GRUB_CMDLINE_LINUX=.*/GRUB_CMDLINE_LINUX="net.ifnames=0%{ if disable_ipv6 } ipv6.disable=1%{ endif } biosdevname=0"/' /target/etc/default/grub
     - curtin in-target --target /target update-grub2
   updates: security
   user-data:
-    package_upgrade: true
+    # Deliberately absent: subiquity's `updates: security` above already upgrades
+    # in-target, and the build waits on cloud-init, so this ran a second full apt
+    # pass inside build time.
+    package_upgrade: false
     disable_root: true
     timezone: ${ timezone }
     users:
