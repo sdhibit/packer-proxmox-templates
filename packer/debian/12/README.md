@@ -3,7 +3,7 @@
 Debian 12 (bookworm). Installs from the netinst ISO via preseed, then converts the VM to a
 Proxmox template with a cloud-init drive attached.
 
-Setup and prerequisites: see the [root README](../README.md).
+Setup and prerequisites: see the [root README](../../../README.md).
 
 ## Build
 
