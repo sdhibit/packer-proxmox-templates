@@ -16,6 +16,7 @@ Proxmox UI.
 - [Quick start](#quick-start)
 - [Configuration](#configuration)
 - [Repository layout and versioning](#repository-layout-and-versioning)
+- [Releases](#releases)
 - [Proxmox setup](#proxmox-setup)
 - [Development](#development)
 - [Troubleshooting](#troubleshooting)
@@ -193,6 +194,33 @@ map entry plus one segment - no new directory, and no risk to the releases alrea
 working. The version is also passed into the answer templates, so a small difference
 can be `%{ if alpine_minor_version >= 25 }` rather than a second file.
 
+## Releases
+
+Push a `v*` tag to cut a release. Nothing is compiled, so the assets are the source
+archives GitHub attaches automatically.
+
+```bash
+git switch main && git pull
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+[.github/workflows/release.yml](.github/workflows/release.yml) runs CI first, refuses any
+tag not reachable from `main`, then publishes with generated notes. A tag with a
+pre-release suffix - `v1.1.0-rc.1` - publishes as a pre-release.
+
+Tags version the repository, not individual templates. When a directory is removed at
+end-of-life, the last release containing it stays downloadable, so a consumer pins that
+tag:
+
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/sdhibit/packer-proxmox-templates.git
+```
+
+Packer cannot fetch templates over the network - `packer build` and `-var-file` take local
+paths, and `packer init` fetches plugins - so pinning is a source checkout, not something
+Packer consumes.
+
 ## Proxmox setup
 
 Create a dedicated API user and role with the minimum privileges Packer needs:
@@ -244,6 +272,35 @@ Both hooks are configured with non-empty `args` deliberately - the v0.3.1 script
 `packer_validate` also has its `files` pattern widened to match `*.pkrvars.hcl`, so that
 adding a point release - which touches no `.pkr.hcl` file at all - still triggers a check.
 See [.pre-commit-config.yaml](.pre-commit-config.yaml).
+
+### Continuous integration
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on pull requests, pushes to
+`main`, and as the first half of a release: `pre-commit`, `packer fmt -check`, then a
+matrix of one job per template directory running `packer init`, a full `packer validate`,
+and one `packer validate -var-file=` per point release.
+
+CI validates fully rather than `-syntax-only`, so `templatefile()` is expanded and a
+source passing variables its answer template never reads fails. That needs the four
+variables with no default, supplied as dummy `PKR_VAR_*` values pointing at
+`proxmox.invalid`, which cannot resolve.
+
+Reproducing a failure locally: validate from *inside* the directory, since
+`templatefile("templates/...")` resolves against the working directory.
+
+```bash
+export PKR_VAR_proxmox_host=proxmox.invalid
+export PKR_VAR_proxmox_username=validate@pve
+export PKR_VAR_proxmox_password=validate
+export PKR_VAR_alpine_minor_version=24
+
+for dir in packer/*/*/; do
+  (cd "$dir" && packer init . && packer validate .) || echo "FAILED: $dir"
+done
+```
+
+The matrix comes from `git ls-files`, so a directory is covered once committed. Actions
+are pinned to commit SHAs; bumping one means replacing the SHA and its version comment.
 
 ### Adding a point release
 
