@@ -4,6 +4,7 @@ source "file" "answers" {
     keyboard_variant = var.keyboard_variant
     timezone         = var.timezone
     dns_servers      = var.dns_servers
+    root_device      = local.root_device
 
     # Lets a release-specific answer use %{ if alpine_minor_version >= 25 } instead of
     # a second file.
