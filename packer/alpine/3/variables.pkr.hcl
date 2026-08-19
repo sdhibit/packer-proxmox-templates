@@ -270,3 +270,31 @@ variable "dns_servers" {
     error_message = "The DNS server list must not be null. An empty list is allowed."
   }
 }
+
+variable "disk_discard" {
+  type        = bool
+  description = <<-EOT
+    Pass discard/TRIM through to the storage. Only does anything on thin-provisioned
+    storage (LVM-thin, ZFS, Ceph), and only if the guest actually trims - which is why
+    fstrim.timer is enabled in the built image.
+  EOT
+  default     = false
+}
+
+variable "disk_ssd" {
+  type        = bool
+  description = <<-EOT
+    Present the disk to the guest as an SSD. Forced off for virtio disks, which Proxmox
+    refuses to emulate an SSD on.
+  EOT
+  default     = false
+}
+
+variable "serial_console" {
+  type        = bool
+  description = <<-EOT
+    Attach a serial port to the VM and put a guest console on it, so `qm terminal` works
+    when networking does not.
+  EOT
+  default     = true
+}

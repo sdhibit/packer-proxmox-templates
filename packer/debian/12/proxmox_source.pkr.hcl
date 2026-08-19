@@ -26,6 +26,7 @@ source "proxmox-iso" "debian" {
   sockets    = var.sockets
 
   scsi_controller = "virtio-scsi-pci"
+  serials         = var.serial_console ? ["socket"] : []
 
   network_adapters {
     model  = "virtio"
@@ -37,6 +38,8 @@ source "proxmox-iso" "debian" {
     storage_pool = var.disk_storage_pool
     format       = var.disk_format
     type         = var.disk_type
+    discard      = var.disk_discard
+    ssd          = var.disk_type == "virtio" ? false : var.disk_ssd
   }
 
   http_directory    = "./http"

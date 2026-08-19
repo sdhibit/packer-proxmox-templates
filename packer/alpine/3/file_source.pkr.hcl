@@ -19,6 +19,7 @@ source "file" "setup" {
     use_public_key_auth = var.ssh_public_key != null ? true : false
     apk_packages        = var.apk_packages
     use_openssh_pam     = var.use_openssh_pam
+    serial_console      = var.serial_console
 
     # Same reason as in the answers file above.
     alpine_minor_version = var.alpine_minor_version

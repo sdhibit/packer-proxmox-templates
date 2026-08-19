@@ -10,6 +10,7 @@ source "file" "preseed" {
     ssh_encrypted_password = bcrypt(var.ssh_password)
     ssh_public_key         = var.ssh_public_key
     apt_packages           = var.apt_packages
+    serial_console         = var.serial_console
   })
   target = "${path.root}/http/preseed.cfg"
 }
