@@ -54,4 +54,14 @@ fi
 apk add ${ join(" ", apk_packages) }
 %{ endif ~}
 
+%{ if serial_console ~}
+# A console on the serial port, so `qm terminal` works on a clone. Alpine boots through
+# extlinux, so this goes in update-extlinux.conf rather than GRUB.
+sed -r -i "s|^#?serial_port=.*|serial_port=ttyS0|" /etc/update-extlinux.conf
+sed -r -i "s|^#?serial_baud=.*|serial_baud=115200|" /etc/update-extlinux.conf
+kernel_opts=$(sed -n 's/^default_kernel_opts="\(.*\)"$/\1/p' /etc/update-extlinux.conf)
+sed -i "s|^default_kernel_opts=.*|default_kernel_opts=\"$kernel_opts console=tty0 console=ttyS0,115200n8\"|" /etc/update-extlinux.conf
+update-extlinux
+%{ endif ~}
+
 rc-service sshd restart

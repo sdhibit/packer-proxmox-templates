@@ -13,6 +13,8 @@ build {
       "echo 'datasource_list: [ NoCloud, ConfigDrive, None ]' > /etc/cloud/cloud.cfg.d/99_pve.cfg",
       "chmod 644 /etc/cloud/cloud.cfg.d/99_pve.cfg",
       "apt-get clean -y",
+      "rm -rf /var/lib/apt/lists/*",
+      "systemctl enable fstrim.timer",
     ]
   }
 

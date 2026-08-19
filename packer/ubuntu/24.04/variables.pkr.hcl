@@ -237,10 +237,10 @@ variable "disable_ipv6" {
   type        = bool
   description = <<-EOT
     Append `ipv6.disable=1` to the installer and the installed system's kernel command
-    line. Defaults to true, which is what this template has always done - set it to false
-    to leave IPv6 enabled in the built image.
+    line. Defaulted to true until 2026-08-19; it now defaults to false, so the built image
+    keeps IPv6. Set it to true to restore the old behaviour.
   EOT
-  default     = true
+  default     = false
 }
 
 variable "keyboard_layout" {
@@ -253,4 +253,32 @@ variable "timezone" {
   type        = string
   description = "Sets the timezone during the subiquity install."
   default     = "Etc/UTC"
+}
+
+variable "disk_discard" {
+  type        = bool
+  description = <<-EOT
+    Pass discard/TRIM through to the storage. Only does anything on thin-provisioned
+    storage (LVM-thin, ZFS, Ceph), and only if the guest actually trims - which is why
+    fstrim.timer is enabled in the built image.
+  EOT
+  default     = false
+}
+
+variable "disk_ssd" {
+  type        = bool
+  description = <<-EOT
+    Present the disk to the guest as an SSD. Forced off for virtio disks, which Proxmox
+    refuses to emulate an SSD on.
+  EOT
+  default     = false
+}
+
+variable "serial_console" {
+  type        = bool
+  description = <<-EOT
+    Attach a serial port to the VM and put a guest console on it, so `qm terminal` works
+    when networking does not.
+  EOT
+  default     = true
 }

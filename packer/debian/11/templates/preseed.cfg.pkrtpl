@@ -26,6 +26,10 @@ d-i grub-installer/only_debian boolean true
 d-i grub-installer/with_other_os boolean true
 ### Boot loader installation
 d-i grub-installer/bootdev string default
+%{ if serial_console ~}
+# A console on the serial port, so `qm terminal` works on a clone.
+d-i debian-installer/add-kernel-opts string console=tty0 console=ttyS0,115200n8
+%{ endif ~}
 
 ### Mirror settings
 d-i mirror/country string manual

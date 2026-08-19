@@ -111,6 +111,23 @@ CPU, memory, disk size and format, locale, timezone, extra packages, HTTP server
 overrides - is documented inline in each directory's `variables.pkr.hcl`, which is the
 authoritative reference.
 
+### Serial console, discard and IPv6
+
+Every template attaches a serial port and puts a guest console on it, so `qm terminal`
+reaches a clone when its network does not. Set `serial_console = false` to drop both the
+device and the console.
+
+`disk_discard` and `disk_ssd` are off by default. Turn `disk_discard` on for
+thin-provisioned storage - LVM-thin, ZFS, Ceph - where it lets a clone return freed
+blocks; `fstrim.timer` is enabled in the Debian and Ubuntu images so the guest actually
+issues the trims. `disk_ssd` is forced off for virtio disks, which Proxmox refuses to
+emulate an SSD on. Alpine ships neither a timer nor `fstrim`, so trimming there needs
+`util-linux` and a cron entry of your own.
+
+`disable_ipv6` defaulted to `true` on the Ubuntu templates until 2026-08-19 and now
+defaults to `false`, so a rebuild keeps IPv6. Set it back to `true` for the old
+behaviour.
+
 ## Repository layout and versioning
 
 Template directories live under `packer/`, keeping the repository root for
