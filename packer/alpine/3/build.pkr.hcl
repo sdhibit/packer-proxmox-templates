@@ -36,6 +36,10 @@ build {
       "unset HISTFILE; rm -rf /root/.*history",     # remove command history
       "rm -f /root/alpine-setup.sh",                # remove setup script
       "rm -f /root/.ssh/authorized_keys",
+      # Alpine's seed lives here, not /var/lib/systemd/random-seed - OpenRC ships seedrng
+      # for every release built here. Cloning a seed means clones share an entropy state,
+      # and a copied creditable seed would credit the RNG on each one.
+      "rm -rf /var/lib/seedrng",
       "sed -r -i 's/^#?PermitRootLogin.*/PermitRootLogin no/g' /etc/ssh/sshd_config",
       "sed -r -i 's/^#?UsePAM.*/UsePam yes/g' /etc/ssh/sshd_config",
       #"sed -r -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
