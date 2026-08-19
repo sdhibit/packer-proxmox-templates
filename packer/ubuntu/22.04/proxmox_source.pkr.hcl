@@ -51,7 +51,7 @@ source "proxmox-iso" "ubuntu" {
     "e<wait>",
     "<down><down><down><end>",
     "<bs><bs><bs><bs><wait>",
-    "autoinstall ip=dhcp net.ifnames=0 biosdevname=0 ipv6.disable=1 ds='nocloud-net;s=${local.http_url}/' ---",
+    "autoinstall ip=dhcp net.ifnames=0 biosdevname=0${local.ipv6_cmdline} ds='nocloud-net;s=${local.http_url}/' ---",
     "<wait><f10><wait>"
   ]
 

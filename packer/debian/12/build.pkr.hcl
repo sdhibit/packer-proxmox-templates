@@ -32,6 +32,11 @@ build {
       "ln -s /etc/machine-id /var/lib/dbus/machine-id",
       # Clear cloud-init state so the clone's first boot is a real first boot.
       "rm -rf /var/lib/cloud/*",
+      # The installer keeps its preseed answers - including the crypted passwords -
+      # under /var/log/installer, which would otherwise ship inside every clone.
+      "rm -rf /var/log/installer",
+      # Cloning a seed file means every clone starts from the same entropy state.
+      "rm -f /var/lib/systemd/random-seed",
       "unset HISTFILE; rm -rf /home/*/.*history /root/.*history",
       "passwd -d $SSH_USERNAME",
       "passwd -l $SSH_USERNAME",

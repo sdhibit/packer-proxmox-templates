@@ -1,4 +1,7 @@
 locals {
+  # Empty unless disable_ipv6 is set, so the cmdline keeps its original spacing.
+  ipv6_cmdline = var.disable_ipv6 ? " ipv6.disable=1" : ""
+
   # "timestamp" template function replacement
   timestamp = regex_replace(timestamp(), "[- TZ:]", "")
 

@@ -13,6 +13,7 @@ source "file" "user_data" {
     ssh_password            = bcrypt(var.ssh_password)
     ssh_public_keys         = compact([var.ssh_public_key])
     cloud_init_apt_packages = var.cloud_init_apt_packages
+    disable_ipv6            = var.disable_ipv6
   })
   target = "${path.root}/http/user-data"
 }

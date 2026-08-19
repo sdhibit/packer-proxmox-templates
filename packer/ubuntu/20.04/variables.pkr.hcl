@@ -233,6 +233,16 @@ variable "locale" {
   default     = "en_US"
 }
 
+variable "disable_ipv6" {
+  type        = bool
+  description = <<-EOT
+    Append `ipv6.disable=1` to the installer and the installed system's kernel command
+    line. Defaults to true, which is what this template has always done - set it to false
+    to leave IPv6 enabled in the built image.
+  EOT
+  default     = true
+}
+
 variable "keyboard_layout" {
   type        = string
   description = "Sets the keyboard layout during the subiquity install."

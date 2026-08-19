@@ -83,15 +83,15 @@ d-i preseed/late_command string \
   in-target chmod -R 600 /home/${ ssh_username }/.ssh/authorized_keys; \
   in-target chown -R ${ ssh_username }:${ ssh_username } /home/${ ssh_username }/.ssh; \
   in-target /bin/sh -c 'echo "${ ssh_username } ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/packer'; \
-  in-target sed -i 's/^#?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config; \
-  in-target sed -i 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config; \
-  in-target sed -i 's/^#?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config;
+  in-target sed -E -i 's/^#?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config; \
+  in-target sed -E -i 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config; \
+  in-target sed -E -i 's/^#?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config;
 %{ else ~}
 d-i preseed/late_command string \
   in-target /bin/sh -c 'echo "${ ssh_username } ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/packer'; \
-  in-target sed -i 's/^#?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config; \
-  in-target sed -i 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config; \
-  in-target sed -i 's/^#?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config;
+  in-target sed -E -i 's/^#?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config; \
+  in-target sed -E -i 's/^#?PubkeyAuthentication .*/PubkeyAuthentication yes/' /etc/ssh/sshd_config; \
+  in-target sed -E -i 's/^#?PasswordAuthentication .*/PasswordAuthentication yes/' /etc/ssh/sshd_config;
 %{ endif ~}
 
 # Avoid that last message about the install being complete.
