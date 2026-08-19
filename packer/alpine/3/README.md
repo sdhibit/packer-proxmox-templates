@@ -4,7 +4,7 @@ Alpine Linux 3 (`virt` image). Boots the virt ISO, drives `setup-alpine` through
 scripted keystroke sequence and answer file, installs cloud-init, then converts the VM to
 a Proxmox template with a cloud-init drive attached.
 
-Setup and prerequisites: see the [root README](../README.md).
+Setup and prerequisites: see the [root README](../../../README.md).
 
 ## Build
 
@@ -30,7 +30,7 @@ This is the only directory covering a whole major series, so every var-file must
 `boot_command` answers them blind and positionally - a release that asks one more or one
 fewer question does not error, it hangs until `ssh_timeout` (45m). The variable selects a
 prompt sequence in [locals.pkr.hcl](locals.pkr.hcl); anything not listed there uses the
-`18-24` sequence. See the [root README](../README.md#alpine-is-the-exception-alpine_minor_version).
+`18-24` sequence. See the [root README](../../../README.md#alpine-is-the-exception-alpine_minor_version).
 
 ## Notes
 

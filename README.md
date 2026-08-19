@@ -23,19 +23,19 @@ Proxmox UI.
 
 ## Available templates
 
-One directory per feature release. Every directory is a self-contained Packer
-configuration - `cd` into it and run `packer build` there.
+One directory per feature release, under `packer/`. Every directory is a self-contained
+Packer configuration - `cd` into it and run `packer build` there.
 
 | Directory | OS | Install method | Version var-files |
 | --- | --- | --- | --- |
-| [alpine-3-amd64/](alpine-3-amd64/) | Alpine Linux 3 (virt) | `setup-alpine` + answer file | 3.18, 3.19, 3.20, 3.21, 3.24 |
-| [debian-11-amd64/](debian-11-amd64/) | Debian 11 (bullseye) | preseed | 11.7 |
-| [debian-12-amd64/](debian-12-amd64/) | Debian 12 (bookworm) | preseed | 12.8, 12.10, 12.15 |
-| [debian-13-amd64/](debian-13-amd64/) | Debian 13 (trixie) | preseed | 13.6 |
-| [ubuntu-20.04-amd64/](ubuntu-20.04-amd64/) | Ubuntu 20.04 LTS (focal) | subiquity autoinstall | 20.04.6 |
-| [ubuntu-22.04-amd64/](ubuntu-22.04-amd64/) | Ubuntu 22.04 LTS (jammy) | subiquity autoinstall | 22.04.2, 22.04.3, 22.04.5 |
-| [ubuntu-24.04-amd64/](ubuntu-24.04-amd64/) | Ubuntu 24.04 LTS (noble) | subiquity autoinstall | 24.04.4 |
-| [ubuntu-26.04-amd64/](ubuntu-26.04-amd64/) | Ubuntu 26.04 LTS | subiquity autoinstall | 26.04 |
+| [alpine/3/](packer/alpine/3/) | Alpine Linux 3 (virt) | `setup-alpine` + answer file | 3.18, 3.19, 3.20, 3.21, 3.24 |
+| [debian/11/](packer/debian/11/) | Debian 11 (bullseye) | preseed | 11.7 |
+| [debian/12/](packer/debian/12/) | Debian 12 (bookworm) | preseed | 12.8, 12.10, 12.15 |
+| [debian/13/](packer/debian/13/) | Debian 13 (trixie) | preseed | 13.6 |
+| [ubuntu/20.04/](packer/ubuntu/20.04/) | Ubuntu 20.04 LTS (focal) | subiquity autoinstall | 20.04.6 |
+| [ubuntu/22.04/](packer/ubuntu/22.04/) | Ubuntu 22.04 LTS (jammy) | subiquity autoinstall | 22.04.2, 22.04.3, 22.04.5 |
+| [ubuntu/24.04/](packer/ubuntu/24.04/) | Ubuntu 24.04 LTS (noble) | subiquity autoinstall | 24.04.4 |
+| [ubuntu/26.04/](packer/ubuntu/26.04/) | Ubuntu 26.04 LTS | subiquity autoinstall | 26.04 |
 
 Older directories are kept so a previously built template can be reproduced; new work
 should target the newest feature release.
@@ -71,7 +71,7 @@ ISOs are written, which is exactly the class of surprise this prevents.
 
 ```bash
 mise install                      # toolchain + git hook
-cd debian-13-amd64
+cd packer/debian/13
 packer init .                     # fetch the proxmox plugin
 packer build \
   -var-file=debian-13.6.pkrvars.hcl \
@@ -112,12 +112,27 @@ authoritative reference.
 
 ## Repository layout and versioning
 
-One directory per **feature release**, one `*.pkrvars.hcl` per **point release**:
+Template directories live under `packer/`, keeping the repository root for
+tooling config and anything that is not a Packer build:
 
 ```
-debian-13-amd64/debian-13.6.pkrvars.hcl
-ubuntu-26.04-amd64/ubuntu-26.04.pkrvars.hcl
-alpine-3-amd64/alpine-3.24.pkrvars.hcl
+packer/<family>/<release>/
+
+packer/
+  alpine/3/
+  debian/11/   12/   13/
+  ubuntu/20.04/   22.04/   24.04/   26.04/
+README.md            this file
+.mise.toml           pinned toolchain
+```
+
+Within `packer/`, one directory per **feature release**, one `*.pkrvars.hcl` per
+**point release**:
+
+```
+packer/debian/13/debian-13.6.pkrvars.hcl
+packer/ubuntu/26.04/ubuntu-26.04.pkrvars.hcl
+packer/alpine/3/alpine-3.24.pkrvars.hcl
 ```
 
 Within a directory:
@@ -155,7 +170,7 @@ When a pin 404s, that is working as intended: bump it deliberately.
 
 ### Alpine is the exception: `alpine_minor_version`
 
-Alpine's directory is one per **major** (`alpine-3-amd64`), because 3.x shares one
+Alpine's directory is one per **major** (`alpine/3`), because 3.x shares one
 builder - but its breaking changes land in *minor* releases. Debian and Ubuntu need no
 equivalent, since their directories are already one per feature release.
 
@@ -163,7 +178,7 @@ A var-file can only change values. It cannot change the `boot_command`, and Alpi
 is a blind keystroke sequence answering `setup-alpine` prompts positionally: a release
 that asks one more or one fewer question does not error, it hangs until
 `ssh_timeout`. So `alpine_minor_version` is required in every Alpine var-file, and
-[locals.pkr.hcl](alpine-3-amd64/locals.pkr.hcl) composes `boot_command` from named
+[locals.pkr.hcl](packer/alpine/3/locals.pkr.hcl) composes `boot_command` from named
 segments selected by it:
 
 ```hcl
@@ -297,7 +312,7 @@ directory, it needs a `.gitignore` of its own like `http/` has.
 cloud-init mounts the Proxmox cloud-init CDROM with `-t auto`, and the Alpine virt image
 does not recognize `iso9660` by default, so the drive never mounts. The build handles
 this by loading the `isofs` module at boot
-([build.pkr.hcl](alpine-3-amd64/build.pkr.hcl)):
+([build.pkr.hcl](packer/alpine/3/build.pkr.hcl)):
 
 ```hcl
 "echo 'isofs' > /etc/modules-load.d/isofs.conf",

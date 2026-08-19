@@ -3,7 +3,7 @@
 Ubuntu 24.04 LTS (noble). Installs from the live-server ISO via subiquity autoinstall,
 then converts the VM to a Proxmox template with a cloud-init drive attached.
 
-Setup and prerequisites: see the [root README](../README.md).
+Setup and prerequisites: see the [root README](../../../README.md).
 
 ## Build
 
