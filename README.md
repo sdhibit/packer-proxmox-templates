@@ -16,6 +16,7 @@ Proxmox UI.
 - [Quick start](#quick-start)
 - [Configuration](#configuration)
 - [Repository layout and versioning](#repository-layout-and-versioning)
+- [Releases](#releases)
 - [Proxmox setup](#proxmox-setup)
 - [Development](#development)
 - [Troubleshooting](#troubleshooting)
@@ -193,6 +194,45 @@ map entry plus one segment - no new directory, and no risk to the releases alrea
 working. The version is also passed into the answer templates, so a small difference
 can be `%{ if alpine_minor_version >= 25 }` rather than a second file.
 
+## Releases
+
+Releases are cut by pushing a tag. Nothing here compiles, so a release is a frozen,
+citable copy of the source - GitHub attaches the `tar.gz` and `zip` source archives to
+every release automatically, and those are the only assets.
+
+```bash
+git switch main && git pull
+git tag -a v1.0.0 -m "v1.0.0"
+git push origin v1.0.0
+```
+
+The tag push triggers [.github/workflows/release.yml](.github/workflows/release.yml),
+which runs the full CI suite first and publishes only if it passes. It also refuses any
+tag not reachable from `main` - a tag can be pushed from any commit, including one that
+was never reviewed, and a release is permanent. Notes are generated
+from the commits and pull requests since the previous tag. A tag carrying a pre-release
+suffix - `v1.1.0-rc.1` - publishes as a pre-release.
+
+Tags are `vMAJOR.MINOR.PATCH` and version the **repository**, not individual templates.
+Directories move independently, so a per-template scheme would churn the tag for
+consumers who never touched that template.
+
+This matters most at decommissioning time. When a directory is removed - Debian 11 going
+end-of-life, say - the last release that still contains it stays downloadable forever, so
+anyone who still needs it pins that tag instead of chasing a deleted directory.
+
+Packer cannot fetch templates over the network: `packer build` and `-var-file` resolve
+local filesystem paths only, and `packer init` fetches plugins, not templates. A consuming
+repository therefore pins a release the way it pins any source checkout:
+
+```bash
+git clone --branch v1.0.0 --depth 1 https://github.com/sdhibit/packer-proxmox-templates.git
+
+# or, in a repository that already vendors this one
+git submodule add https://github.com/sdhibit/packer-proxmox-templates.git
+git -C packer-proxmox-templates checkout v1.0.0
+```
+
 ## Proxmox setup
 
 Create a dedicated API user and role with the minimum privileges Packer needs:
@@ -244,6 +284,52 @@ Both hooks are configured with non-empty `args` deliberately - the v0.3.1 script
 `packer_validate` also has its `files` pattern widened to match `*.pkrvars.hcl`, so that
 adding a point release - which touches no `.pkr.hcl` file at all - still triggers a check.
 See [.pre-commit-config.yaml](.pre-commit-config.yaml).
+
+### Continuous integration
+
+[.github/workflows/ci.yml](.github/workflows/ci.yml) runs on every pull request, every
+push to `main`, and as the first half of a release:
+
+| Job | Checks |
+| --- | --- |
+| `pre-commit` | The same hooks as the local install, over all tracked files |
+| `fmt` | `packer fmt -check -recursive .` - reports, never rewrites |
+| `discover` | Lists the template directories, feeding the matrix below |
+| `validate` | Per directory: `packer init`, a full `packer validate`, then one `packer validate -var-file=` per point release |
+
+CI runs a **full** validate, not the hook's `-syntax-only`. Syntax-only skips variable
+evaluation, so it never expands `templatefile()` and cannot catch a source passing
+`apt_packages` to an answer template that reads `cloud_init_apt_packages` - a real bug
+that once sat undetected in `packer/ubuntu/20.04`. A full validate needs the four
+variables that have no default, which CI supplies as dummy `PKR_VAR_*` values;
+`proxmox.invalid` is reserved by RFC 2606 and cannot resolve, and validation connects
+nowhere regardless.
+
+Actions are pinned to full commit SHAs with the version in a trailing comment, not to
+mutable tags like `@v7`. Whoever owns an action can repoint a tag at new code, and the
+release job holds `contents: write`, so actions are pinned the way any other dependency
+is. Bumping one means replacing the SHA and its comment together.
+
+Two things to know before reproducing a CI failure locally:
+
+- **Validate from inside the directory.** `templatefile("templates/...")` resolves
+  against the working directory, so `packer validate packer/debian/13` fails from the
+  repository root while `cd packer/debian/13 && packer validate .` passes.
+- **The matrix comes from `git ls-files`**, so a new directory is covered as soon as it
+  is committed - and an untracked local `example.pkrvars.hcl` is never validated.
+
+The whole validate job, locally:
+
+```bash
+export PKR_VAR_proxmox_host=proxmox.invalid
+export PKR_VAR_proxmox_username=validate@pve
+export PKR_VAR_proxmox_password=validate
+export PKR_VAR_alpine_minor_version=24
+
+for dir in packer/*/*/; do
+  (cd "$dir" && packer init . && packer validate .) || echo "FAILED: $dir"
+done
+```
 
 ### Adding a point release
 

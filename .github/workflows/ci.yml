@@ -1,0 +1,104 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  # `packer validate` evaluates every variable, unlike the `-syntax-only` pre-commit
+  # hook, so the four variables with no default have to be set. Nothing here reaches a
+  # host: `.invalid` is reserved by RFC 2606 and can never resolve. `PKR_VAR_*` is used
+  # rather than `-var` flags because an undeclared variable passed as a flag is an
+  # error, and `alpine_minor_version` exists only in packer/alpine/3.
+  PKR_VAR_proxmox_host: proxmox.invalid
+  PKR_VAR_proxmox_username: validate@pve
+  PKR_VAR_proxmox_password: validate
+  PKR_VAR_alpine_minor_version: "24"
+
+jobs:
+  pre-commit:
+    name: pre-commit
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5
+      - run: pre-commit run --all-files --show-diff-on-failure
+
+  fmt:
+    name: packer fmt
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5
+      - run: packer fmt -check -recursive .
+
+  discover:
+    name: discover template directories
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      dirs: ${{ steps.dirs.outputs.dirs }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - id: dirs
+        name: List template directories
+        run: |
+          dirs=$(git ls-files packer \
+            | grep '/build\.pkr\.hcl$' \
+            | xargs -n1 dirname \
+            | jq -Rsc 'split("\n") | map(select(length > 0))')
+          echo "$dirs"
+          echo "dirs=$dirs" >> "$GITHUB_OUTPUT"
+
+  validate:
+    name: validate ${{ matrix.dir }}
+    needs: discover
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    strategy:
+      fail-fast: false
+      matrix:
+        dir: ${{ fromJSON(needs.discover.outputs.dirs) }}
+    defaults:
+      run:
+        # Templates call `templatefile("templates/...")`, which resolves relative to the
+        # working directory, not to the template file. Validating from the repository
+        # root fails on every directory; each one has to be validated from inside itself.
+        working-directory: ${{ matrix.dir }}
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: jdx/mise-action@3c2e0cf82a5b2e5249f0d3635a4d83d0ae861518 # v4.2.5
+
+      - name: packer init
+        run: packer init .
+
+      - name: packer validate (directory defaults)
+        run: packer validate .
+
+      - name: packer validate (each point-release var-file)
+        run: |
+          for var_file in $(git ls-files '*.pkrvars.hcl'); do
+            echo "::group::$var_file"
+            packer validate -var-file="$var_file" .
+            echo "::endgroup::"
+          done
