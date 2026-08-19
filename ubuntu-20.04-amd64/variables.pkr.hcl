@@ -48,13 +48,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-20.04-cloudinit"
+  default     = "ubuntu-20.04.6-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 20.04"
+  default     = "Base template for Ubuntu 20.04.6."
 }
 
 variable "template_vm_id" {
@@ -221,7 +221,7 @@ variable "cloud_init_storage_pool" {
   default     = null
 }
 
-variable "apt_packages" {
+variable "cloud_init_apt_packages" {
   type        = list(string)
   description = "A list of apt packages to install during the subiquity cloud-init installer."
   default     = []

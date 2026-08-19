@@ -1,4 +1,4 @@
-source "proxmox" "alpine" {
+source "proxmox-iso" "alpine" {
   proxmox_url              = "https://${var.proxmox_host}:${var.proxmox_port}/api2/json"
   node                     = var.proxmox_node
   username                 = var.proxmox_username
@@ -10,11 +10,14 @@ source "proxmox" "alpine" {
   template_description = var.template_description
   vm_id                = var.template_vm_id
 
-  iso_url          = local.use_iso_file ? null : var.iso_url
-  iso_storage_pool = var.iso_storage_pool
-  iso_file         = local.use_iso_file ? "${var.iso_storage_pool}:iso/${var.iso_file}" : null
-  iso_checksum     = var.iso_checksum
-  unmount_iso      = true
+  boot_iso {
+    iso_url          = local.use_iso_file ? null : var.iso_url
+    iso_storage_pool = var.iso_storage_pool
+    iso_file         = local.use_iso_file ? "${var.iso_storage_pool}:iso/${var.iso_file}" : null
+    iso_checksum     = var.iso_checksum
+    iso_target_path  = "${path.root}/downloaded_iso_path"
+    unmount          = true
+  }
 
   os         = "l26"
   qemu_agent = true
@@ -45,25 +48,7 @@ source "proxmox" "alpine" {
 
   boot = null
 
-  boot_command = [
-    "root<enter><wait>",
-    "ifconfig eth0 up && udhcpc -i eth0<enter><wait5>", # Start networking with DHCP
-    "wget ${local.http_url}/answers<enter><wait>",      #Replace CR if file was generated on Windows machine
-    "sed -i 's/\\r$//g' $PWD/answers<enter><wait>",
-    "USERANSERFILE=1 setup-alpine -f $PWD/answers<enter><wait10>", # Run alpine installer
-    "${local.root_password}<enter><wait>",
-    "${local.root_password}<enter><wait>",
-    "no<enter><wait10>",
-    "y<enter><wait20>",
-    "reboot<enter>",
-    "<wait30>",
-    "root<enter><wait>",
-    "${local.root_password}<enter><wait>",
-    "wget ${local.http_url}/alpine-setup.sh<enter><wait>",
-    "chmod +x $PWD/alpine-setup.sh<enter><wait>",
-    "sed -i 's/\\r$//g' $PWD/alpine-setup.sh<enter><wait>",
-    "$PWD/alpine-setup.sh<enter><wait>",
-  ]
+  boot_command = local.boot_command
 
   boot_wait = "20s"
 

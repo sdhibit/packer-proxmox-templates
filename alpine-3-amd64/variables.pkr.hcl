@@ -45,16 +45,30 @@ variable "proxmox_node" {
   default     = "proxmox"
 }
 
+variable "alpine_minor_version" {
+  type        = number
+  description = <<-EOT
+    Alpine feature release this build targets - the 24 in 3.24. Required: it picks the
+    setup-alpine prompt sequence in locals.pkr.hcl.
+  EOT
+
+  validation {
+    condition = var.alpine_minor_version >= 18
+    # Packer requires this to start uppercase and end in a period, unlike OpenTofu.
+    error_message = "Alpine minor version must be 18 or greater; older releases are not supported here."
+  }
+}
+
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "alpine-3-cloudinit"
+  default     = "alpine-3.24-virt-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Alpine 3."
+  default     = "Base template for Alpine 3.24."
 }
 
 variable "template_vm_id" {
@@ -153,7 +167,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://dl-cdn.alpinelinux.org/alpine/v3.21/releases/x86_64/alpine-virt-3.21.3-x86_64.iso"
+  default     = "https://dl-cdn.alpinelinux.org/alpine/v3.24/releases/x86_64/alpine-virt-3.24.1-x86_64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -171,7 +185,7 @@ variable "iso_file" {
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = null
+  default     = "e73a6241bd5f3c5c2d4d38c02cc52c378c0415a7c888bd292066bf36e0f41a39"
 }
 
 variable "http_server_host" {

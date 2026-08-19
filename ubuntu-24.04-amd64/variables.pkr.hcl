@@ -48,13 +48,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-24.04-cloudinit"
+  default     = "ubuntu-24.04.4-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 24.04"
+  default     = "Base template for Ubuntu 24.04.4 LTS."
 }
 
 variable "template_vm_id" {
@@ -158,7 +158,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://releases.ubuntu.com/noble/ubuntu-24.04-live-server-amd64.iso"
+  default     = "https://releases.ubuntu.com/24.04/ubuntu-24.04.4-live-server-amd64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -176,7 +176,7 @@ variable "iso_file" {
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = null
+  default     = "e907d92eeec9df64163a7e454cbc8d7755e8ddc7ed42f99dbc80c40f1a138433"
 }
 
 variable "http_server_host" {
