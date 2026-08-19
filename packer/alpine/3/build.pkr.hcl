@@ -41,7 +41,7 @@ build {
       # and a copied creditable seed would credit the RNG on each one.
       "rm -rf /var/lib/seedrng",
       "sed -r -i 's/^#?PermitRootLogin.*/PermitRootLogin no/g' /etc/ssh/sshd_config",
-      "sed -r -i 's/^#?UsePAM.*/UsePam yes/g' /etc/ssh/sshd_config",
+      "sed -r -i 's/^#?UsePAM.*/UsePAM yes/g' /etc/ssh/sshd_config",
       #"sed -r -i 's/^#?PasswordAuthentication.*/PasswordAuthentication yes/g' /etc/ssh/sshd_config",
       "passwd -d root", # Disable root access
       "passwd -l root", # Lock root password
