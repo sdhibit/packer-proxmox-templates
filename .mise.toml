@@ -1,0 +1,8 @@
+[tools]
+packer = "1.16"
+pre-commit = "4.6"
+
+# `mise install` bootstraps the repo, hook included. postinstall fires even when every
+# tool is already present, so this is idempotent and a fresh clone needs one command.
+[hooks]
+postinstall = "pre-commit install"
