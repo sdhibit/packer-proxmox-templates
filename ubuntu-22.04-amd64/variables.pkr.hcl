@@ -48,13 +48,13 @@ variable "proxmox_node" {
 variable "template_name" {
   type        = string
   description = "The VM template name."
-  default     = "ubuntu-22.04-cloudinit"
+  default     = "ubuntu-22.04.5-cloudinit"
 }
 
 variable "template_description" {
   type        = string
   description = "Description of the VM template."
-  default     = "Base template for Ubuntu 22.04"
+  default     = "Base template for Ubuntu 22.04.5 LTS."
 }
 
 variable "template_vm_id" {
@@ -158,7 +158,7 @@ variable "sockets" {
 variable "iso_url" {
   type        = string
   description = "URL to an ISO file to upload to Proxmox, and then boot from."
-  default     = "https://www.releases.ubuntu.com/22.04/ubuntu-22.04.3-live-server-amd64.iso"
+  default     = "https://releases.ubuntu.com/22.04/ubuntu-22.04.5-live-server-amd64.iso"
 }
 
 variable "iso_storage_pool" {
@@ -176,7 +176,7 @@ variable "iso_file" {
 variable "iso_checksum" {
   type        = string
   description = "Checksum of the ISO file."
-  default     = "a4acfda10b18da50e2ec50ccaf860d7f20b389df8765611142305c0e911d16fd"
+  default     = "9bc6028870aef3f74f4e16b900008179e78b130e6b0b9a140635434a46aa98b0"
 }
 
 variable "http_server_host" {

@@ -14,6 +14,7 @@ source "proxmox" "ubuntu" {
   iso_storage_pool = var.iso_storage_pool
   iso_file         = local.use_iso_file ? "${var.iso_storage_pool}:iso/${var.iso_file}" : null
   iso_checksum     = var.iso_checksum
+  iso_target_path  = "${path.root}/iso"
   unmount_iso      = true
 
   os         = "l26"

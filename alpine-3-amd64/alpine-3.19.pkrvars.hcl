@@ -1,6 +1,9 @@
 template_name        = "alpine-3.19-virt-cloudinit"
 template_description = "Base template for Alpine 3.19."
 
+# Selects the setup-alpine prompt sequence. See locals.pkr.hcl.
+alpine_minor_version = 19
+
 # Uncomment if the ISO already exists in the 'iso_storage_pool' location
 #iso_file = "alpine-virt-3.19.1-x86_64.iso"
 iso_url      = "https://dl-cdn.alpinelinux.org/alpine/v3.19/releases/x86_64/alpine-virt-3.19.1-x86_64.iso"

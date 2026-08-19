@@ -25,6 +25,13 @@ build {
     execute_command = "chmod +x {{ .Path }}; sudo env {{ .Vars }} {{ .Path }}; rm -f {{ .Path }}"
     inline = [
       "shred -u /etc/ssh/*_key /etc/ssh/*_key.pub",
+      # Truncate, don't delete - systemd regenerates an empty machine-id on first boot
+      # but not a missing one, and clones sharing an ID collide on DHCP and journald.
+      "truncate -s 0 /etc/machine-id",
+      "rm -f /var/lib/dbus/machine-id",
+      "ln -s /etc/machine-id /var/lib/dbus/machine-id",
+      # Clear cloud-init state so the clone's first boot is a real first boot.
+      "rm -rf /var/lib/cloud/*",
       "unset HISTFILE; rm -rf /home/*/.*history /root/.*history",
       "passwd -d $SSH_USERNAME",
       "passwd -l $SSH_USERNAME",
