@@ -266,6 +266,24 @@ Reference links for WSL2 / ChromeOS port forwarding:
 - <https://github.com/shayne/wsl2-hacks>
 - <https://chromeos.dev/en/web-environment/port-forwarding>
 
+### Where the installer ISO is downloaded
+
+Builds download the ISO to `<template-dir>/downloaded_iso_path/`, named after its
+checksum rather than the release. That directory is gitignored and Packer creates it, so
+nothing is committed for it.
+
+`boot_iso.iso_target_path` is set to that same path, which looks redundant and is - the
+plugin ignores the setting entirely. `common/builder.go` passes the *state key* rather
+than the configured path to the download step, so the boot ISO always lands in a relative
+`downloaded_iso_path` regardless of configuration, and `PACKER_CACHE_DIR` cannot override
+it either. The setting is pinned to the real location so that a fixed plugin keeps
+behaving exactly as it does today instead of silently relocating the ISO.
+
+This is a regression: `iso_target_path` worked until the boot ISO was folded into the
+shared ISO handling in plugin v1.2.0. **When it is fixed upstream, point
+`iso_target_path` wherever you actually want the ISOs** - and if that is a committed
+directory, it needs a `.gitignore` of its own like `http/` has.
+
 ### Alpine: cloud-init drive not loading
 
 cloud-init mounts the Proxmox cloud-init CDROM with `-t auto`, and the Alpine virt image

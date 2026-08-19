@@ -221,7 +221,7 @@ variable "cloud_init_storage_pool" {
   default     = null
 }
 
-variable "apt_packages" {
+variable "cloud_init_apt_packages" {
   type        = list(string)
   description = "A list of apt packages to install during the subiquity cloud-init installer."
   default     = []

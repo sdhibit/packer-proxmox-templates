@@ -1,7 +1,7 @@
 build {
   sources = [
     "source.file.preseed",
-    "source.proxmox.debian",
+    "source.proxmox-iso.debian",
   ]
 
   # Packages & Configuration

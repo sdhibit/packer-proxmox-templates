@@ -2,7 +2,7 @@ build {
   sources = [
     "source.file.meta_data",
     "source.file.user_data",
-    "source.proxmox.ubuntu"
+    "source.proxmox-iso.ubuntu"
   ]
 
   # Wait for cloud-init to complete after reboot

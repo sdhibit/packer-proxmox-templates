@@ -2,7 +2,7 @@ build {
   sources = [
     "source.file.answers",
     "source.file.setup",
-    "source.proxmox.alpine",
+    "source.proxmox-iso.alpine",
   ]
 
   # Packages
