@@ -44,7 +44,7 @@ should target the newest feature release.
 
 - A reachable **Proxmox VE** host, and an API user with the privileges listed under
   [Proxmox setup](#proxmox-setup).
-- **Packer**, plus the `proxmox` plugin (`>= 1.2.1`, declared in each directory's
+- **Packer**, plus the `proxmox` plugin (`~> 1.2.4`, declared in each directory's
   `versions.pkr.hcl` and installed by `packer init`).
 - **[mise](https://mise.jdx.dev)**, which installs the pinned toolchain.
 
@@ -61,6 +61,11 @@ postinstall fires even when every tool is already present, so re-running is harm
 The Packer version pin is deliberate and matches the version the consuming repo pins. A
 floating `latest` on either side lets the two drift, turning a plugin or deprecation
 change into a surprise at build time.
+
+The plugin is pinned for the same reason, with `~> 1.2.4` - patches inside 1.2.x arrive
+automatically, 1.3.0 needs a deliberate edit. Note the three-component form is what pins
+the minor; `~> 1.2` would allow 1.3.0 through. Plugin 1.2.0 silently changed where boot
+ISOs are written, which is exactly the class of surprise this prevents.
 
 ## Quick start
 
@@ -98,8 +103,9 @@ template_vm_id          = 9000
 ssh_public_key          = "ssh-ed25519 AAAA... you@example.com"
 ```
 
-`proxmox_host` and `proxmox_username` are the only variables with no default;
-authenticate with either `proxmox_token` or `proxmox_password`. Every other variable -
+`proxmox_host` and `proxmox_username` are the only variables with no default - plus
+`alpine_minor_version` in the Alpine directory. Authenticate with either `proxmox_token`
+or `proxmox_password`. Every other variable -
 CPU, memory, disk size and format, locale, timezone, extra packages, HTTP server
 overrides - is documented inline in each directory's `variables.pkr.hcl`, which is the
 authoritative reference.
@@ -123,12 +129,14 @@ Within a directory:
 | `variables.pkr.hcl` | Every input variable, with descriptions and validation |
 | `locals.pkr.hcl` | Derived values, including Alpine's composed `boot_command` |
 | `versions.pkr.hcl` | Required plugin versions |
+| `file_source.pkr.hcl` / `cloud_init_source.pkr.hcl` | Renders `templates/` into `http/` for the installer to fetch |
 | `templates/` | `.pkrtpl` answer files - preseed, user-data/meta-data, Alpine answers |
+| `http/` | Where the rendered answer files land, served by Packer. Contents gitignored |
 | `*.pkrvars.hcl` | One per point release: name, description, `iso_url`, `iso_checksum` |
 
-A version var-file holds only `template_name`, `template_description`, `iso_url` and
-`iso_checksum` - a version pin is data, so it belongs in a var-file, and the set of
-files is a reviewable list of what can be built.
+A version var-file holds `template_name`, `template_description`, `iso_url` and
+`iso_checksum`, plus `alpine_minor_version` for Alpine - a version pin is data, so it
+belongs in a var-file, and the set of files is a reviewable list of what can be built.
 
 Those same four defaults in `variables.pkr.hcl` mirror the directory's **newest**
 var-file, so a build with no version var-file produces the current release rather than
