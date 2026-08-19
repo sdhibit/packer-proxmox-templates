@@ -66,11 +66,11 @@ tasksel tasksel/first multiselect ssh-server, standard system utilities
 # # Full upgrade packages after debootstrap
 d-i pkgsel/upgrade select full-upgrade
 d-i pkgsel/update-policy select none # unattended-upgrades
-d-i pkgsel/include string sudo qemu-guest-agent ca-certificates
+# One directive only. A second `pkgsel/include` does not append, it *replaces*, so
+# setting apt_packages used to drop sudo/qemu-guest-agent/ca-certificates - and the
+# build then failed in the first provisioner, which needs sudo.
+d-i pkgsel/include string sudo qemu-guest-agent ca-certificates%{ if length(apt_packages) > 0 } ${ join(" ", apt_packages) }%{ endif }
 d-i pkgsel/install-language-support boolean false
-%{ if length(apt_packages) > 0 ~}
-d-i pkgsel/include string ${ join(" ", apt_packages) }
-%{ endif ~}
 
 ### Late Commands
 

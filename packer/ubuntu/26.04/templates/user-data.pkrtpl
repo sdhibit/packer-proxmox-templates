@@ -22,6 +22,7 @@ autoinstall:
   drivers:
     install: false
   packages:
+    - cloud-init
     - qemu-guest-agent
 %{ for package in cloud_init_apt_packages ~}
     - ${package}
