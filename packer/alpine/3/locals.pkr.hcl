@@ -10,6 +10,10 @@ locals {
 
   root_password = coalesce(var.root_password, uuidv4())
 
+  # setup-alpine installs to a device name, so the disk type decides it: a virtio disk
+  # appears as /dev/vda, ide, sata and scsi all appear as /dev/sda.
+  root_device = var.disk_type == "virtio" ? "/dev/vda" : "/dev/sda"
+
   # setup-alpine is answered blind and positionally. A release that asks a different
   # number of questions hangs until ssh_timeout instead of failing, so the sequence is
   # kept in named segments per minor version rather than one literal list.
