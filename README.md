@@ -13,6 +13,7 @@ Proxmox UI.
 
 - [Available templates](#available-templates)
 - [Requirements](#requirements)
+- [Proxmox versions](#proxmox-versions)
 - [Quick start](#quick-start)
 - [Configuration](#configuration)
 - [Repository layout and versioning](#repository-layout-and-versioning)
@@ -67,6 +68,18 @@ The plugin is pinned for the same reason, with `~> 1.2.4` - patches inside 1.2.x
 automatically, 1.3.0 needs a deliberate edit. Note the three-component form is what pins
 the minor; `~> 1.2` would allow 1.3.0 through. Plugin 1.2.0 silently changed where boot
 ISOs are written, which is exactly the class of surprise this prevents.
+
+### Proxmox versions
+
+| Version | Status |
+| --- | --- |
+| **9.2** | Verified - every template in this repository is built and tested here |
+| 9.0, 9.1 | Expected to work; unverified |
+| 8.x and older | Expected to work with one change - the role needs `VM.Monitor` rather than `VM.GuestAgent.Audit`, see [Proxmox setup](#proxmox-setup). Unverified |
+
+Nothing here uses a 9-only feature, so older releases should build. That is an
+expectation, not a test result: only 9.2 is confirmed. If you build against another
+release, a note saying which one is a welcome issue.
 
 ## Quick start
 
@@ -240,30 +253,49 @@ Packer consumes.
 
 ## Proxmox setup
 
-Create a dedicated API user and role with the minimum privileges Packer needs:
+Create a dedicated API user and role with the minimum privileges Packer needs. **The
+role differs by Proxmox version** - the guest-agent privilege was renamed in PVE 9.
+
+On **PVE 9 and newer**:
 
 ```bash
 pveum useradd packer@pve
 pveum passwd packer@pve
 pveum roleadd Packer -privs "VM.Config.Disk VM.Config.CPU VM.Config.Memory \
   Datastore.AllocateSpace Datastore.AllocateTemplate Sys.Modify VM.Config.Options \
-  VM.Allocate VM.Audit VM.Console VM.Config.CDROM VM.Config.Network VM.PowerMgmt \
-  VM.Config.HWType SDN.Use"
+  VM.Allocate VM.Audit VM.Console VM.GuestAgent.Audit VM.Config.CDROM \
+  VM.Config.Network VM.PowerMgmt VM.Config.HWType SDN.Use"
 pveum aclmod / -user packer@pve -role Packer
 ```
 
-Two of these are easy to miss:
+On **PVE 8 and older**, the same list with `VM.Monitor` in place of
+`VM.GuestAgent.Audit`. The `VM.GuestAgent.*` privileges do not exist before 9.0, and
+`VM.Monitor` was removed in it, so no single list covers both.
+
+Three of these are easy to miss:
 
 | Privilege | Needed for |
 | --- | --- |
 | `Datastore.AllocateTemplate` | Uploading the ISO to `iso_storage_pool`. Without it the build fails at upload; `Datastore.AllocateSpace` alone is not enough. |
 | `SDN.Use` | Attaching the VM NIC to `network_bridge`. Required on PVE 8.2+, where bridge access moved behind an SDN permission check. |
+| `VM.GuestAgent.Audit` (PVE 9+), `VM.Monitor` (PVE 8) | Reading the VM's address back out of the guest agent. **Its absence does not produce an error** - see [Build hangs at `Waiting for SSH`](#build-hangs-at-waiting-for-ssh). |
+
+`root@pam` holds every privilege, so a build that works as root and hangs as
+`packer@pve` is a missing privilege until proven otherwise.
 
 Omit `Datastore.AllocateTemplate` only if every ISO is pre-staged and each var-file sets
 `iso_file` instead of `iso_url`.
 
 Prefer an API token over a password: create one for `packer@pve`, then set
 `proxmox_username = "packer@pve!<token-id>"` and `proxmox_token = "<secret>"`.
+
+A token created with privilege separation - the default - inherits **none** of the
+user's ACLs. Either grant the token directly or check what it actually holds:
+
+```bash
+pveum acl modify / -token 'packer@pve!packer' -role Packer
+pveum user token permissions packer@pve packer
+```
 
 ## Development
 
@@ -343,6 +375,27 @@ The unattended installer never completed. For Alpine this usually means the
 `setup-alpine` prompt sequence drifted - see
 [`alpine_minor_version`](#alpine-is-the-exception-alpine_minor_version). Watch the VM
 console in the Proxmox UI to see which prompt it is stuck on.
+
+### Build hangs at `Waiting for SSH`
+
+The installer finished and the VM is up, but the builder never gets an address. It
+reads one from the guest agent - `GET /nodes/{node}/qemu/{vmid}/agent/network-get-interfaces` -
+and that call needs `VM.GuestAgent.Audit` on PVE 9+, or `VM.Monitor` on PVE 8. Without
+it the API answers 403, the plugin keeps polling, and the build sits there until
+`ssh_timeout` - 45 minutes by default. No error is printed.
+
+Confirm it in one call while the build is stuck:
+
+```bash
+curl -sk -H "Authorization: PVEAPIToken=packer@pve!<token-id>=<secret>" \
+  "https://<host>:8006/api2/json/nodes/<node>/qemu/<vmid>/agent/network-get-interfaces"
+```
+
+A 403 is the privilege. An interface list means the agent side is fine, and the next
+suspect is SSH authentication - a rejected key retries up to `ssh_handshake_attempts`
+(100) and looks exactly the same from outside. `PACKER_LOG=1` distinguishes them:
+`unable to authenticate` is a key problem, silence is an address problem. Shorten the
+wait while debugging with `-var ssh_timeout=3m -var ssh_handshake_attempts=3`.
 
 ### Running on a NAT'ed network (WSL2, ChromeOS Linux)
 
