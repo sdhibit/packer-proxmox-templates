@@ -53,9 +53,9 @@ variable "alpine_minor_version" {
   EOT
 
   validation {
-    condition = var.alpine_minor_version >= 18
+    condition = var.alpine_minor_version >= 24
     # Packer requires this to start uppercase and end in a period, unlike OpenTofu.
-    error_message = "Alpine minor version must be 18 or greater; older releases are not supported here."
+    error_message = "Alpine minor version must be 24 or greater; older releases are end-of-life."
   }
 }
 

@@ -30,17 +30,19 @@ Packer configuration - `cd` into it and run `packer build` there.
 
 | Directory | OS | Install method | Version var-files |
 | --- | --- | --- | --- |
-| [alpine/3/](packer/alpine/3/) | Alpine Linux 3 (virt) | `setup-alpine` + answer file | 3.18, 3.19, 3.20, 3.21, 3.24 |
-| [debian/11/](packer/debian/11/) | Debian 11 (bullseye) | preseed | 11.7 |
+| [alpine/3/](packer/alpine/3/) | Alpine Linux 3 (virt) | `setup-alpine` + answer file | 3.24 |
 | [debian/12/](packer/debian/12/) | Debian 12 (bookworm) | preseed | 12.8, 12.10, 12.15 |
 | [debian/13/](packer/debian/13/) | Debian 13 (trixie) | preseed | 13.6 |
-| [ubuntu/20.04/](packer/ubuntu/20.04/) | Ubuntu 20.04 LTS (focal) | subiquity autoinstall | 20.04.6 |
 | [ubuntu/22.04/](packer/ubuntu/22.04/) | Ubuntu 22.04 LTS (jammy) | subiquity autoinstall | 22.04.2, 22.04.3, 22.04.5 |
 | [ubuntu/24.04/](packer/ubuntu/24.04/) | Ubuntu 24.04 LTS (noble) | subiquity autoinstall | 24.04.4 |
 | [ubuntu/26.04/](packer/ubuntu/26.04/) | Ubuntu 26.04 LTS | subiquity autoinstall | 26.04 |
 
-Older directories are kept so a previously built template can be reproduced; new work
-should target the newest feature release.
+Older directories are kept while their release is still supported upstream, so a
+previously built template can be reproduced; new work should target the newest feature
+release. A directory is removed once its release goes end-of-life - Alpine 3.18 through
+3.21, Debian 11 and Ubuntu 20.04 were dropped on 2026-08-21. The last release tag
+containing one stays downloadable, so a consumer that still needs it pins that tag; see
+[Releases](#releases).
 
 ## Requirements
 
@@ -151,8 +153,8 @@ packer/<family>/<release>/
 
 packer/
   alpine/3/
-  debian/11/   12/   13/
-  ubuntu/20.04/   22.04/   24.04/   26.04/
+  debian/12/   13/
+  ubuntu/22.04/   24.04/   26.04/
 README.md            this file
 .mise.toml           pinned toolchain
 ```
@@ -216,10 +218,10 @@ segments selected by it:
 setup_alpine_prompt_variant_by_minor = {
   # 25 = "25"        <- add an entry when a release changes the prompts
 }
-setup_alpine_variant = lookup(local.setup_alpine_prompt_variant_by_minor, var.alpine_minor_version, "18-24")
+setup_alpine_variant = lookup(local.setup_alpine_prompt_variant_by_minor, var.alpine_minor_version, "24")
 ```
 
-Everything not named there uses the `18-24` sequence. Adding a diverging release is one
+Everything not named there uses the `24` sequence. Adding a diverging release is one
 map entry plus one segment - no new directory, and no risk to the releases already
 working. The version is also passed into the answer templates, so a small difference
 can be `%{ if alpine_minor_version >= 25 }` rather than a second file.
@@ -459,7 +461,6 @@ dead one can be replaced without having to open it first; checked August 2026.
 ### Packer and Proxmox
 
 - [Proxmox builder documentation gaps](https://github.com/hashicorp/packer-plugin-proxmox/issues/184) - packer-plugin-proxmox#184 (was packer#8463 before the builder was split into its own plugin repo)
-- [Packer fails to build for Ubuntu 20.04](https://github.com/hashicorp/packer/issues/9115#issuecomment-688991546) - the comment, not the issue, is the useful part
 - [dustinrue/proxmox-packer](https://github.com/dustinrue/proxmox-packer) - a comparable repo, actively maintained and now HCL
 - [cisagov/skeleton-packer#6](https://github.com/cisagov/skeleton-packer/issues/6) - leftover `admin` user in a built image
 - [Provisioning Proxmox VMs with Ansible](https://medium.com/@victor.oliveira.comp/provision-proxmox-vms-with-ansible-quick-and-easy-107d781fd749) - consuming the templates once built
@@ -468,7 +469,6 @@ dead one can be replaced without having to open it first; checked August 2026.
 
 - [Removing the install user with Packer](https://serverfault.com/questions/842315/removing-install-user-with-packer)
 - [Removing the packer user at provisioning](https://github.com/Azure/aks-engine/issues/899) - aks-engine is retired; the cleanup discussion still applies
-- [Ubuntu 20.04 cloud-init gotchas](https://everythingshouldbevirtual.com/Ubuntu-20.04-cloud-init-gotchas/)
 - [`UsePAM` no longer supported](https://serverfault.com/questions/991009/usepam-not-supported-anymore) - background for the sshd edits in the cleanup provisioners
 - [Locked accounts refuse SSH login](https://github.com/camptocamp/puppet-accounts/issues/35) - why Alpine locks rather than deletes root
 - [Ubuntu DashAsBinSh](https://wiki.ubuntu.com/DashAsBinSh) - `/bin/sh` is dash, which is why provisioners avoid bashisms
