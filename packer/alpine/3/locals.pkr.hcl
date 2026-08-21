@@ -26,7 +26,7 @@ locals {
 
   # Root password twice, decline the extra user, confirm erasing the disk.
   setup_alpine_prompts = {
-    "18-24" = [
+    "24" = [
       "USERANSERFILE=1 setup-alpine -f $PWD/answers<enter><wait10>",
       "${local.root_password}<enter><wait>",
       "${local.root_password}<enter><wait>",
@@ -36,12 +36,12 @@ locals {
   }
 
   # Add an entry when a release changes setup-alpine's questions. Everything else
-  # falls back to "18-24".
+  # falls back to "24".
   setup_alpine_prompt_variant_by_minor = {
     # 25 = "25"
   }
 
-  setup_alpine_variant = lookup(local.setup_alpine_prompt_variant_by_minor, var.alpine_minor_version, "18-24")
+  setup_alpine_variant = lookup(local.setup_alpine_prompt_variant_by_minor, var.alpine_minor_version, "24")
 
   # Reboot into the installed system, then fetch and run the post-install script.
   boot_postlude = [

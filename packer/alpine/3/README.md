@@ -18,19 +18,16 @@ packer build -var-file=alpine-3.24.pkrvars.hcl -var-file=example.pkrvars.hcl .
 | Var-file | `alpine_minor_version` |
 | --- | --- |
 | `alpine-3.24.pkrvars.hcl` | 24 |
-| `alpine-3.21.pkrvars.hcl` | 21 |
-| `alpine-3.20.pkrvars.hcl` | 20 |
-| `alpine-3.19.pkrvars.hcl` | 19 |
-| `alpine-3.18.pkrvars.hcl` | 18 |
 
-The newest var-file (3.24) is mirrored by the directory defaults.
+The newest var-file (3.24) is mirrored by the directory defaults. Releases older than
+3.24 are end-of-life and were removed; `alpine_minor_version` rejects them.
 
 This is the only directory covering a whole major series, so every var-file must set
 `alpine_minor_version`. `setup-alpine`'s prompts change between minor releases and the
 `boot_command` answers them blind and positionally - a release that asks one more or one
 fewer question does not error, it hangs until `ssh_timeout` (45m). The variable selects a
 prompt sequence in [locals.pkr.hcl](locals.pkr.hcl); anything not listed there uses the
-`18-24` sequence. See the [root README](../../../README.md#alpine-is-the-exception-alpine_minor_version).
+`24` sequence. See the [root README](../../../README.md#alpine-is-the-exception-alpine_minor_version).
 
 ## Notes
 
